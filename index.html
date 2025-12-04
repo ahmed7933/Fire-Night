@@ -65,23 +65,17 @@
         .g-title { font-size: 1rem; font-weight: 800; color: white; margin-bottom: 2px;} 
         .g-sub { font-size: 0.7rem; color: var(--primary); font-weight: bold; }
 
-        /* --- Instruction Screen (NEW) --- */
-        .instr-content {
-            background: #151515; border: 1px solid var(--primary); border-radius: 20px; 
-            width: 100%; max-width: 450px; padding: 25px; text-align: right;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-        .instr-title { color: var(--primary); font-size: 1.5rem; font-weight: 900; margin-bottom: 15px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .instr-body { color: #ccc; font-size: 0.95rem; line-height: 1.7; margin-bottom: 25px; }
-        .instr-point { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
-        .instr-icon { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
-
         /* --- Modals --- */
         .modal-glass { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; }
         .modal-glass.show { display: flex; animation: fadeIn 0.3s; }
         .guide-content { background: #151515; border: 1px solid var(--primary); border-radius: 20px; width: 100%; max-width: 400px; padding: 25px; text-align: right; max-height: 85vh; overflow-y: auto; }
         .step-box { background: rgba(255,255,255,0.05); border-right: 3px solid var(--primary); padding: 12px; margin-bottom: 12px; border-radius: 8px; }
-        
+        .instr-content { background: #151515; border: 1px solid var(--primary); border-radius: 20px; width: 100%; max-width: 450px; padding: 25px; text-align: right; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .instr-title { color: var(--primary); font-size: 1.5rem; font-weight: 900; margin-bottom: 15px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .instr-body { color: #ccc; font-size: 0.95rem; line-height: 1.7; margin-bottom: 25px; }
+        .instr-point { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+        .instr-icon { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
+
         /* --- Card Styles --- */
         .card-stage { perspective: 1000px; width: 100%; max-width: 320px; height: 320px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: 0.6s; }
@@ -118,16 +112,64 @@
         .dice-btn.rolling { animation: shake 0.5s infinite; }
         .catch-card { background: #151515; width: 90%; max-width: 350px; border-radius: 20px; padding: 25px; text-align: center; border: 2px solid var(--primary); }
 
-        /* Spin Wheel Styles */
-        .spin-header { text-align: center; margin-bottom: 20px; background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 15px; border: 1px solid var(--green); display: flex; justify-content: center; gap: 10px; }
-        .wheel-container { width: 330px; height: 330px; position: relative; border-radius: 50%; border: 8px solid #222; box-shadow: 0 0 40px rgba(46, 204, 113, 0.3); overflow: hidden; margin: 0 auto; }
-        .wheel-bg { width: 100%; height: 100%; border-radius: 50%; position: absolute; top:0; left:0; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
-        .wheel-icons-layer { width: 100%; height: 100%; border-radius: 50%; position: absolute; top:0; left:0; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
-        .icon-box { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
-        .icon-content { position: absolute; left: -20px; bottom: 65px; width: 40px; text-align: center; font-size: 1.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); color: white; }
-        .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 45px solid #fff; z-index: 20; filter: drop-shadow(0 4px 4px black); }
-        .wheel-result-card { background: #111; border: 3px solid var(--green); padding: 25px; border-radius: 25px; text-align: center; width: 90%; max-width: 380px; box-shadow: 0 0 50px rgba(46, 204, 113, 0.2); }
-        #wheel-result-desc { color: #ddd; font-size: 1.1rem; line-height: 1.6; margin: 20px 0; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid #333; }
+        /* ==================================================
+           STYLES: WHEEL OF FORTUNE (المثلثات - المصححة)
+           ================================================== */
+        .spin-header {
+            text-align: center; margin-bottom: 20px;
+            background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 15px;
+            border: 1px solid var(--green); display: flex; justify-content: center; gap: 10px;
+        }
+        
+        .wheel-container {
+            width: 330px; height: 330px; position: relative; border-radius: 50%;
+            border: 8px solid #222; box-shadow: 0 0 40px rgba(46, 204, 113, 0.3); 
+            overflow: hidden; margin: 0 auto;
+        }
+        
+        .wheel {
+            width: 100%; height: 100%; border-radius: 50%; position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); /* Spin effect */
+        }
+
+        /* المثلثات باستخدام Skew */
+        .segment {
+            position: absolute; width: 50%; height: 50%;
+            top: 50%; left: 50%;
+            transform-origin: 0% 0%;
+            border: 1px solid rgba(0,0,0,0.2); /* فاصل خفيف */
+        }
+
+        /* محتوى كل قطاع (يدور مع المثلث) */
+        .seg-content {
+            position: absolute; left: 50%; top: 50%;
+            text-align: center; width: 140px;
+            /* إعادة تدوير النص ليكون مقروءاً */
+            transform-origin: 0 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .seg-icon { font-size: 1.4rem; display: block; margin-bottom: 3px; filter: drop-shadow(1px 1px 1px black); }
+        .seg-text { font-size: 0.7rem; font-weight: 800; color: white; text-shadow: 1px 1px 3px black; white-space: nowrap; }
+
+        /* المؤشر */
+        .pointer {
+            position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; 
+            border-left: 20px solid transparent; 
+            border-right: 20px solid transparent;
+            border-top: 45px solid #fff; z-index: 20; filter: drop-shadow(0 4px 4px black);
+        }
+
+        .wheel-result-card {
+            background: #111; border: 3px solid var(--green); padding: 25px; border-radius: 25px;
+            text-align: center; width: 90%; max-width: 380px;
+            box-shadow: 0 0 50px rgba(46, 204, 113, 0.2);
+        }
+        #wheel-result-desc {
+            color: #ddd; font-size: 1.1rem; line-height: 1.6; margin: 20px 0;
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;
+            border: 1px solid #333;
+        }
 
         @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } 100% { transform: rotate(0deg); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -323,8 +365,8 @@
         <div style="position:relative; margin-top: 20px;">
             <div class="pointer"></div>
             <div class="wheel-container">
-                <div class="wheel-bg" id="wheel-bg"></div>
-                <div class="wheel-icons-layer" id="wheel-icons"></div>
+                <div class="wheel" id="the-wheel">
+                    </div>
             </div>
         </div>
         <button class="btn-gold" style="width:200px; margin-top:40px; background: linear-gradient(90deg, #2ecc71, #27ae60);" onclick="spinWheel()">لف العجلة 💫</button>
@@ -739,30 +781,28 @@
         }
 
         function createWheelClean() {
-            let gradientString = "conic-gradient(";
-            const segmentSize = 360 / wheelSegments.length; 
+            const wheel = document.getElementById('the-wheel');
+            const numSegments = wheelSegments.length; 
+            const segAngle = 360 / numSegments; 
+            
             wheelSegments.forEach((seg, i) => {
-                const startDeg = i * segmentSize;
-                const endDeg = (i + 1) * segmentSize;
-                gradientString += `${seg.color} ${startDeg}deg ${endDeg}deg${i < wheelSegments.length - 1 ? ',' : ''}`;
-            });
-            gradientString += ")";
-            document.getElementById('wheel-bg').style.background = gradientString;
-
-            const iconContainer = document.getElementById('wheel-icons');
-            wheelSegments.forEach((seg, i) => {
-                const box = document.createElement('div');
-                box.className = 'icon-box';
-                const midAngle = (i * segmentSize) + (segmentSize / 2);
-                box.style.transform = `rotate(${midAngle}deg)`;
-                box.innerHTML = `<div class="icon-content" style="transform: rotate(90deg);">${seg.icon}</div>`;
-                iconContainer.appendChild(box);
+                const el = document.createElement('div');
+                el.className = 'segment';
+                el.style.backgroundColor = seg.color;
+                el.style.transform = `rotate(${i * segAngle}deg) skewY(-${90 - segAngle}deg)`;
+                
+                const content = document.createElement('div');
+                content.className = 'seg-content';
+                content.style.transform = `skewY(${90 - segAngle}deg) rotate(${segAngle / 2}deg)`; 
+                content.innerHTML = `<span class="seg-icon">${seg.icon}</span><span class="seg-text">${seg.text}</span>`;
+                
+                el.appendChild(content);
+                wheel.appendChild(el);
             });
         }
 
         function spinWheel() {
-            const bg = document.getElementById('wheel-bg');
-            const icons = document.getElementById('wheel-icons');
+            const wheel = document.getElementById('the-wheel');
             const spinBtn = document.querySelector('#spin-game-area .btn-gold');
             if(spinBtn.disabled) return;
             
@@ -770,15 +810,14 @@
             const randomDeg = Math.floor(1800 + Math.random() * 1800); 
             currentRotation += randomDeg;
             
-            bg.style.transform = `rotate(${currentRotation}deg)`;
-            icons.style.transform = `rotate(${currentRotation}deg)`;
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
             
             setTimeout(() => {
                 const numSegments = wheelSegments.length;
                 const segAngle = 360 / numSegments;
                 const actualDeg = currentRotation % 360;
                 const winningAngle = (360 - actualDeg) % 360;
-                const winningIndex = Math.floor(winningAngle / segAngle);
+                const winningIndex = Math.floor((((360 - actualDeg + (segAngle/2)) % 360) / segAngle));
                 
                 const result = wheelSegments[winningIndex];
                 showWheelResult(result);
