@@ -688,7 +688,95 @@
         }
         function showWheelResult(res) { const modal = document.getElementById('wheel-modal'); document.getElementById('wheel-result-icon').innerText = res.icon; document.getElementById('wheel-result-title').innerText = res.text; document.getElementById('wheel-result-desc').innerText = res.desc; modal.style.display = 'flex'; }
         function closeWheelModal() { document.getElementById('wheel-modal').style.display = 'none'; spinTurn = (spinTurn === 0) ? 1 : 0; updateSpinUI(); }
+// ==========================================
+        // 7. نظام حفظ التقدم (AUTO-SAVE SYSTEM)
+        // ==========================================
+        
+        // تحميل البيانات عند فتح الموقع
+        window.onload = function() {
+            // 1. التحقق من تسجيل الدخول
+            if(localStorage.getItem('isLoggedIn') === 'true') {
+                show('dashboard');
+            }
 
+            // 2. استرجاع تقدم لعبة Catch Me
+            const savedP1 = localStorage.getItem('catch_p1');
+            const savedP2 = localStorage.getItem('catch_p2');
+            const savedTurn = localStorage.getItem('catch_turn');
+            
+            if(savedP1) catchPlayers[0].pos = parseInt(savedP1);
+            if(savedP2) catchPlayers[1].pos = parseInt(savedP2);
+            if(savedTurn) cTurn = parseInt(savedTurn);
+            
+            // تحديث الواجهة إذا كان هناك تقدم محفوظ
+            if(savedP1 || savedP2) {
+                 // لا نظهر الشاشة، فقط نحدث البيانات في الخلفية
+                 // عند فتح اللعبة سيتم بناء البورد بالأماكن الصحيحة
+            }
+        };
+
+        // تعديل دالة الدخول لحفظ الحالة
+        const originalLogin = login;
+        login = function() {
+            const val = document.getElementById('pass').value;
+            // تشفير بسيط للكود عشان ميبقاش مكشوف في الملف (Base64)
+            // 1234 = MTIzNA==
+            // HOT = SE9U
+            if(btoa(val) === "MTIzNA==" || btoa(val) === "SE9U") { 
+                localStorage.setItem('isLoggedIn', 'true');
+                show('dashboard');
+            } else {
+                document.getElementById('error').style.display='block';
+            }
+        };
+
+        // تعديل دالة حركة اللاعبين لحفظ المكان خطوة بخطوة
+        const originalMoveCatch = moveCatchPlayer;
+        moveCatchPlayer = function(steps) {
+            const p = catchPlayers[cTurn]; 
+            let moved = 0;
+            const intv = setInterval(() => {
+                if(p.pos < 50) { 
+                    p.pos++; 
+                    updateTokens(); 
+                    moved++; 
+                }
+                if(moved >= steps || p.pos >= 50) {
+                    clearInterval(intv);
+                    // --- حفظ التقدم الجديد ---
+                    localStorage.setItem('catch_p1', catchPlayers[0].pos);
+                    localStorage.setItem('catch_p2', catchPlayers[1].pos);
+                    localStorage.setItem('catch_turn', cTurn); // سنقوم بتبديل الدور بعد إغلاق الكارت
+                    
+                    setTimeout(()=>showCatchChallenge(p.pos), 500);
+                }
+            }, 300);
+        };
+        
+        // تعديل دالة إغلاق الكارت لحفظ الدور الجديد
+        const originalCloseCatch = closeCatchModal;
+        closeCatchModal = function() {
+            document.getElementById('catch-modal').style.display = 'none';
+            if(catchPlayers[cTurn].pos >= 50) {
+                alert(`مبروك! ${catchPlayers[cTurn].name} كسب الليلة! 🎉`);
+                // تصفير اللعبة عند الفوز
+                catchPlayers[0].pos=0; catchPlayers[1].pos=0; 
+                localStorage.removeItem('catch_p1');
+                localStorage.removeItem('catch_p2');
+                localStorage.removeItem('catch_turn');
+                updateTokens(); cTurn=0;
+            } else { 
+                switchCTurn();
+                // حفظ الدور الجديد
+                localStorage.setItem('catch_turn', cTurn);
+            }
+        };
+        
+        // زر "مسح التقدم" (إضافي في الإعدادات لو حبيت)
+        function resetAllProgress() {
+            localStorage.clear();
+            location.reload();
+        }
     </script>
 </body>
 </html>
