@@ -132,6 +132,27 @@
         .catch-title { font-size: 1.4rem; color: var(--primary); margin-bottom: 10px; font-weight: 900; }
         .catch-desc { font-size: 1rem; color: #ddd; line-height: 1.6; margin-bottom: 20px; }
 
+        /* زر إعادة ضبط اللعبة */
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #555;
+            color: #888;
+            padding: 8px 20px;
+            border-radius: 50px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .reset-btn:active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(229, 9, 20, 0.1);
+        }
+        
         /* ==================================================
            STYLES: WHEEL OF FORTUNE (PRO CONIC VERSION)
            ================================================== */
@@ -152,7 +173,6 @@
 
         @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } 100% { transform: rotate(0deg); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
     </style>
 </head>
 <body>
@@ -324,6 +344,7 @@
                 <div style="font-size:0.7rem; color:#aaa;">الدور على</div>
                 <div id="catch-player" style="font-weight:bold; color:var(--primary);">الزوج 👨</div>
             </div>
+            <button class="reset-btn" onclick="resetCatchGame()">🔄 ابدأ من جديد</button>
             <button class="dice-btn" id="catch-dice" onclick="rollCatchDice()" ontouchstart="rollCatchDice()">🎲</button>
             <div style="text-align:center;">
                 <div style="font-size:0.7rem; color:#aaa;">المكان</div>
@@ -776,6 +797,28 @@
         function resetAllProgress() {
             localStorage.clear();
             location.reload();
+        }
+
+        function resetCatchGame() {
+            // رسالة تأكيد عشان لو داسوا بالغلط اللعبة متبوظش
+            if(confirm("هل أنتم متأكدين؟ هيتم مسح التقدم والبدء من نقطة الصفر!")) {
+                playSound('click');
+                
+                // 1. تصفير المتغيرات في الكود
+                catchPlayers[0].pos = 0;
+                catchPlayers[1].pos = 0;
+                cTurn = 0; // الدور يرجع للزوج
+
+                // 2. مسح الذاكرة من المتصفح (Local Storage)
+                localStorage.removeItem('hn_catch_p1');
+                localStorage.removeItem('hn_catch_p2');
+                localStorage.removeItem('hn_catch_turn');
+
+                // 3. تحديث الشاشة
+                updateTokens(); // رجوع البيادق للبداية
+                document.getElementById('catch-player').innerText = `${catchPlayers[0].name} ${catchPlayers[0].icon}`;
+                document.getElementById('catch-pos').innerText = "Start";
+            }
         }
     </script>
 </body>
