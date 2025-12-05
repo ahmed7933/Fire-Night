@@ -354,68 +354,95 @@
 
     <script>
         // ==========================================
-        // 1. محرك الصوت والبيانات (Sound & Data)
+        // 1. بيانات التعليمات
         // ==========================================
-        
-        // نظام توليد الأصوات (بدون ملفات mp3 لسرعة التحميل)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playSound(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume(); // تفعيل الصوت مع أول لمسة
-            
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            const now = audioCtx.currentTime;
-
-            if (type === 'click') {
-                // صوت نقر ناعم (Soft Pop)
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
-                gainNode.gain.setValueAtTime(0.1, now); // صوت واطي
-                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
-            } 
-            else if (type === 'flip') {
-                // صوت حفيف الورق (Whoosh) - محاكاة بسيطة
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(200, now);
-                gainNode.gain.setValueAtTime(0.05, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 0.2);
-                osc.start(now);
-                osc.stop(now + 0.2);
+        const gameInstructions = {
+            game1: {
+                title: "1. هزار ونار 😂",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> كسر الملل والضحك.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> اسحبوا 10 كروت وجاوبوا بصراحة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> ممنوع الزعل هنا، جاوبوا على الأسئلة وضحكوا من قلبكم!</div></div>`,
+                action: () => startGame('stage1')
+            },
+            game2: {
+                title: "2. حب وقرب ❤️",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تجديد الرومانسية.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> اسحبوا كروت المشاعر وجاوبوا من القلب.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> بصوا في عين بعض أثناء الكلام.</div></div>`,
+                action: () => startGame('stage2')
+            },
+            game3: {
+                title: "3. أرض المعركة ⚔️",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تحديد مكان السهرة بالتراضي.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> احذفوا الأماكن بالتبادل لحد ما يتبقى مكان واحد.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> المكان الأخير هو اللي هيحصل فيه الأكشن!</div></div>`,
+                action: () => startEliminationGame()
+            },
+            game4: {
+                title: "4. همس ولمس 🔥",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> التسخين والمداعبة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> نفذوا الكروت الحسية بهدوء.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> ممنوع الاستعجال، خدوا وقتكم في كل لمسة.</div></div>`,
+                action: () => startGame('stage3')
+            },
+            game5: {
+                title: "5. نار ودمار 🔞",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> قمة المتعة والأكشن.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> كروت جريئة جداً للتنفيذ الفوري.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> كل كارت لازم يتنفذ، مفيش انسحاب!</div></div>`,
+                action: () => startGame('stage4')
+            },
+            game6: {
+                title: "6. تمثيل ساخن 🎭",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تقمص أدوار جديدة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> عيشوا السيناريو اللي يطلعلكم بكل تفاصيله.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> انسوا شخصياتكم الحقيقية وعيشوا الدور.</div></div>`,
+                action: () => startRoleplay()
+            },
+            game7: {
+                title: "7. رحلة المتعة 🎲",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> الوصول للنهاية قبل شريكك.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> ارمي النرد ونفذ التحدي اللي في المربع.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> اللعبة 50 خطوة متدرجة (أزرق -> بنفسجي -> وردي -> أحمر).</div></div>`,
+                action: () => startCatchMe()
+            },
+            game8: {
+                title: "8. عجلة الأوضاع 🎡",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> اختيار عشوائي للأوضاع.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> لف العجلة ونفذ الأمر اللي السهم يشاور عليه.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> الحظ هو اللي بيحكم، ولازم التنفيذ!</div></div>`,
+                action: () => startSpinGame()
+            },
+            game9: {
+                title: "9. دلع وولع 🎁",
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> مكافأة الختام.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> خربش الكارت وشوف هديتك.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> الجائزة دي حقك وممكن تطلبها في أي وقت.</div></div>`,
+                action: () => initScratch()
             }
-            else if (type === 'win') {
-                // صوت نجاح هادي (Chime)
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(500, now);
-                osc.frequency.exponentialRampToValueAtTime(1000, now + 0.5);
-                gainNode.gain.setValueAtTime(0.1, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 1);
-                osc.start(now);
-                osc.stop(now + 1);
-            }
+        };
+
+        function openInstructions(gameId) {
+            const data = gameInstructions[gameId];
+            if(!data) return;
+            document.getElementById('instr-title').innerText = data.title;
+            document.getElementById('instr-body').innerHTML = data.content;
+            const btn = document.getElementById('instr-start-btn');
+            btn.onclick = () => {
+                document.getElementById('instructions-screen').classList.remove('show');
+                data.action();
+            };
+            document.getElementById('instructions-screen').classList.add('show');
         }
 
-        // --- قواعد البيانات (مختصرة للعرض - انسخ محتواك الكامل هنا) ---
+        // ==========================================
+        // 2. DATA (يرجى وضع الداتا الكاملة هنا)
+        // ==========================================
+        
+        // ⚠ تنبيه: للحصول على أفضل تجربة، يرجى نسخ المحتوى النصي الكامل (500+ عنصر) 
+        // الذي أرسلته لك في الردود السابقة ووضعه هنا داخل متغير db و catchDB.
+        // هذا نموذج مختصر للتشغيل.
+        
         const db = {
-            stage1: [{ t: "b", q: "مسابقة نظرات." }, {t: "m", q: "نكتة بايخة"}], 
-            stage2: [{ t: "b", q: "حضن دقيقة صمت." }],
-            stage3: [{ t: "m", q: "بوس الرقبة." }],
-            stage4: [{ t: "f", q: "انتي الملكة." }],
-            prizes: ["مساج كامل", "فطار في السرير", "عزومة كشري"],
-            roleplays: [{ chars: "الدكتور والمريضة", wear: "بالطو", plot: "كشف شامل." }]
+            stage1: [{ t: "m", q: "قلد صوت حماتك." }, { t: "f", q: "ارقصي بلدي." }, { t: "b", q: "مسابقة نظرات." }], 
+            stage2: [{ t: "b", q: "حضن دقيقة صمت." }, { t: "m", q: "أوصفها بكلمة." }, { t: "f", q: "سر مخبياه." }],
+            stage3: [{ t: "m", q: "بوس الرقبة." }, { t: "f", q: "مساج للظهر." }, { t: "b", q: "تلامس بدون بوس." }],
+            stage4: [{ t: "f", q: "انتي الملكة." }, { t: "m", q: "وضع الدوجي." }, { t: "b", q: "علاقة في الصالة." }],
+            prizes: ["مساج كامل", "فطار في السرير", "عزومة كشري", "إعفاء من المواعين"],
+            roleplays: [
+                { chars: "الدكتور والمريضة", wear: "بالطو", plot: "كشف شامل يتحول لمداعبة." },
+                { chars: "المدرس والطالبة", wear: "نضارة", plot: "عقاب مدرسي مثير." }
+            ]
         };
 
         const catchDB = [
             { type: "start", text: "البداية", icon: "🏁", desc: "نقطة الانطلاق" },
+            // ... (انسخ الـ 50 مربع هنا للحصول على اللعبة الكاملة) ...
             { type: "blue", text: "بوسة", desc: "بوسة رقيقة", icon: "💋" },
-            // ... (أكمل الـ 50 مربع هنا)
-            { type: "finish", text: "النهاية", desc: "مبروك!", icon: "🎉" }
+            { type: "blue", text: "همسة", desc: "كلمة بحبك", icon: "👂" },
+            { type: "finish", text: "النهاية", desc: "مبروك! علاقة كاملة 🔥", icon: "🎉" }
         ];
 
         const placesData = [
@@ -429,59 +456,29 @@
         const wheelSegments = [
             { text: "بوسة", icon: "💋", color: "#e74c3c", desc: "بوسة فرنسية عميقة." },
             { text: "مساج", icon: "💆", color: "#e67e22", desc: "مساج للرقبة 3 دقايق." },
-            { text: "همس", icon: "🗣️", color: "#f1c40f", desc: "همس في الأذن." },
-            { text: "لعق", icon: "👅", color: "#2ecc71", desc: "مداعبة باللسان." },
-            { text: "Oral", icon: "🍭", color: "#1abc9c", desc: "جنس فموي." },
-            { text: "Doggy", icon: "🐕", color: "#3498db", desc: "وضعية الدوجي." },
-            { text: "تحكم", icon: "👑", color: "#9b59b6", desc: "أنت الملك." },
-            { text: "69", icon: "♋", color: "#8e44ad", desc: "وضعية 69." },
-            { text: "تعري", icon: "👙", color: "#ff4081", desc: "رقصة تعري." },
-            { text: "عضة", icon: "🧛", color: "#f44336", desc: "عضة خفيفة." },
-            { text: "يدوية", icon: "👋", color: "#ff9800", desc: "مداعبة يدوية." },
-            { text: "واقف", icon: "🧍", color: "#ffeb3b", desc: "علاقة سريعة." },
-            { text: "فارسة", icon: "🤠", color: "#cddc39", desc: "الزوجة تتحكم." },
-            { text: "مغمض", icon: "🙈", color: "#009688", desc: "غمض عينك." },
-            { text: "أداة", icon: "🪶", color: "#03a9f4", desc: "استخدم ريشة." },
-            { text: "حرية", icon: "😈", color: "#607d8b", desc: "افعل ما يحلو لك." }
+            { text: "همس", icon: "🗣️", color: "#f1c40f", desc: "همس في الأذن بأكثر خيال نفسك فيه." },
+            { text: "لعق", icon: "👅", color: "#2ecc71", desc: "مداعبة باللسان لمنطقة حساسة." },
+            { text: "Oral", icon: "🍭", color: "#1abc9c", desc: "جنس فموي حتى تطلب التوقف." },
+            { text: "Doggy", icon: "🐕", color: "#3498db", desc: "علاقة في وضعية الدوجي." },
+            { text: "تحكم", icon: "👑", color: "#9b59b6", desc: "أنت الملك لمدة 5 دقايق." },
+            { text: "69", icon: "♋", color: "#8e44ad", desc: "وضعية 69 للمتعة المتبادلة." },
+            { text: "تعري", icon: "👙", color: "#ff4081", desc: "رقصة تعري (Striptease) بطيئة." },
+            { text: "عضة", icon: "🧛", color: "#f44336", desc: "عضة خفيفة (Love Bite) في الرقبة." },
+            { text: "يدوية", icon: "👋", color: "#ff9800", desc: "مداعبة يدوية للوصول للنشوة." },
+            { text: "واقف", icon: "🧍", color: "#ffeb3b", desc: "علاقة سريعة وقوفاً." },
+            { text: "فارسة", icon: "🤠", color: "#cddc39", desc: "الزوجة في الأعلى وتتحكم." },
+            { text: "مغمض", icon: "🙈", color: "#009688", desc: "غمض عينك واستقبل لمسات مفاجئة." },
+            { text: "أداة", icon: "🪶", color: "#03a9f4", desc: "استخدم ريشة أو ثلج للمداعبة." },
+            { text: "حرية", icon: "😈", color: "#607d8b", desc: "افعل بشريكك ما يحلو لك." }
         ];
 
-        const gameInstructions = {
-            game1: { title: "1. هزار ونار 😂", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> كسر الملل والضحك.</div></div>`, action: () => startGame('stage1') },
-            game2: { title: "2. حب وقرب ❤️", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تجديد الرومانسية.</div></div>`, action: () => startGame('stage2') },
-            game3: { title: "3. أرض المعركة ⚔️", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تحديد المكان.</div></div>`, action: () => startEliminationGame() },
-            game4: { title: "4. همس ولمس 🔥", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> التسخين والمداعبة.</div></div>`, action: () => startGame('stage3') },
-            game5: { title: "5. نار ودمار 🔞", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> قمة المتعة.</div></div>`, action: () => startGame('stage4') },
-            game6: { title: "6. تمثيل ساخن 🎭", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تقمص أدوار.</div></div>`, action: () => startRoleplay() },
-            game7: { title: "7. رحلة المتعة 🎲", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> الوصول للنهاية.</div></div>`, action: () => startCatchMe() },
-            game8: { title: "8. عجلة الأوضاع 🎡", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> اختيار عشوائي.</div></div>`, action: () => startSpinGame() },
-            game9: { title: "9. دلع وولع 🎁", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> مكافأة الختام.</div></div>`, action: () => initScratch() }
-        };
-
         // ==========================================
-        // 2. CORE LOGIC & SAVE SYSTEM (نظام الحفظ)
+        // 3. CORE LOGIC
         // ==========================================
         let currentQ = [];
         let activeStage = "";
 
-        // استرجاع البيانات عند فتح الموقع
-        window.onload = function() {
-            // 1. التحقق من تسجيل الدخول
-            if(localStorage.getItem('hn_login') === 'true') {
-                show('dashboard', false); // false تعني بدون صوت
-            }
-
-            // 2. استرجاع تقدم لعبة Catch Me
-            const savedP1 = localStorage.getItem('hn_catch_p1');
-            const savedP2 = localStorage.getItem('hn_catch_p2');
-            const savedTurn = localStorage.getItem('hn_catch_turn');
-            
-            if(savedP1) catchPlayers[0].pos = parseInt(savedP1);
-            if(savedP2) catchPlayers[1].pos = parseInt(savedP2);
-            if(savedTurn) cTurn = parseInt(savedTurn);
-        };
-
-        function show(id, withSound = true) {
-            if(withSound) playSound('click');
+        function show(id) {
             document.querySelectorAll('.screen').forEach(s => { 
                 if(s.id !== id) {
                     s.classList.remove('active'); 
@@ -493,34 +490,16 @@
 
         function login() {
             const val = document.getElementById('pass').value;
-            if(val==="1234" || val==="HOT") {
-                localStorage.setItem('hn_login', 'true'); // حفظ الدخول
-                show('dashboard');
-            }
+            if(val==="1234" || val==="HOT") show('dashboard');
             else document.getElementById('error').style.display='block';
         }
 
         function goHome() { show('dashboard'); }
-        function openGuide() { playSound('click'); document.getElementById('modal-guide').classList.add('show'); }
-        function closeGuide() { playSound('click'); document.getElementById('modal-guide').classList.remove('show'); }
-        
-        function openInstructions(gameId) {
-            playSound('click');
-            const data = gameInstructions[gameId];
-            if(!data) return;
-            document.getElementById('instr-title').innerText = data.title;
-            document.getElementById('instr-body').innerHTML = data.content;
-            const btn = document.getElementById('instr-start-btn');
-            btn.onclick = () => {
-                playSound('click');
-                document.getElementById('instructions-screen').classList.remove('show');
-                data.action();
-            };
-            document.getElementById('instructions-screen').classList.add('show');
-        }
+        function openGuide() { document.getElementById('modal-guide').classList.add('show'); }
+        function closeGuide() { document.getElementById('modal-guide').classList.remove('show'); }
 
         // ==========================================
-        // 3. GAME FUNCTIONS
+        // 4. GAME FUNCTIONS
         // ==========================================
         function startGame(stg) {
             activeStage = stg;
@@ -536,7 +515,6 @@
         }
 
         function flip() {
-            playSound('flip');
             const c = document.getElementById('card-obj');
             if(c.classList.contains('flipped')) { c.classList.remove('flipped'); setTimeout(updTxt, 300); }
             else { updTxt(); c.classList.add('flipped'); }
@@ -556,7 +534,6 @@
 
         function startRoleplay() { show('roleplay-area'); genRoleplay(); }
         function genRoleplay() {
-            playSound('flip');
             const rp = db.roleplays[Math.floor(Math.random() * db.roleplays.length)];
             document.getElementById('rp-chars').innerText = rp.chars;
             document.getElementById('rp-wear').innerText = rp.wear;
@@ -574,15 +551,12 @@
             ctx.globalCompositeOperation='destination-out';
         }
         
-        // تصحيح اللمس
         document.addEventListener('mousedown', (e) => { if(e.target.id === 'cvs') drawing = true; });
         document.addEventListener('touchstart', (e) => { if(e.target.id === 'cvs') drawing = true; });
         document.addEventListener('mouseup', () => drawing = false);
         document.addEventListener('touchend', () => drawing = false);
         document.addEventListener('mousemove', (e) => { if(cvs && drawing) scratch(e); });
-        document.addEventListener('touchmove', (e) => { 
-            if(cvs && drawing && e.target.id === 'cvs') { e.preventDefault(); scratch(e); }
-        }, { passive: false });
+        document.addEventListener('touchmove', (e) => { if(cvs && drawing && e.target.id === 'cvs') { e.preventDefault(); scratch(e); } }, { passive: false });
 
         function scratch(e) {
             const r = cvs.getBoundingClientRect();
@@ -592,7 +566,8 @@
         }
 
         // --- Elimination ---
-        let activePlacesCount = 9; let elimTurn = 0; 
+        let activePlacesCount = 9;
+        let elimTurn = 0; 
         function startEliminationGame() { show('elimination-area'); resetElimination(); }
         function resetElimination() {
             const grid = document.getElementById('places-grid'); grid.innerHTML = "";
@@ -610,7 +585,6 @@
             if (activePlacesCount <= 1) return;
             const card = document.getElementById(`p-${id}`);
             if (card.classList.contains('eliminated')) return;
-            playSound('click'); // صوت الحذف
             card.classList.add('eliminated'); activePlacesCount--;
             elimTurn = (elimTurn === 0) ? 1 : 0; updateElimTurnUI();
             if (activePlacesCount === 1) declareWinnerPlace();
@@ -625,19 +599,17 @@
             allCards.forEach(card => { if (!card.classList.contains('eliminated')) { card.classList.add('winner'); winnerText = card.querySelector('.place-name').innerText; } });
             const banner = document.getElementById('elim-turn'); banner.innerText = `🎉 المكان المختار: ${winnerText}`; banner.style.color = "#d4af37"; banner.style.borderColor = "#d4af37";
             document.getElementById('reset-elim-btn').style.display = 'block';
-            playSound('win');
             if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
         }
 
-        // --- Catch Me (Auto-Save Enabled) ---
+        // --- Catch Me ---
         const catchPlayers = [ { name: "الزوج", icon: "👨", pos: 0, css: "p1-token" }, { name: "الزوجة", icon: "👩", pos: 0, css: "p2-token" } ];
         let cTurn = 0; let boardCreated = false;
-
         function startCatchMe() { show('catch-game-area'); if(!boardCreated) { createCatchBoard(); boardCreated = true; } }
-
         function createCatchBoard() {
             const board = document.getElementById('board'); board.innerHTML = "";
             let row = document.createElement('div'); row.className = 'row';
+            // 50 Squares Loop
             for (let i = 50; i >= 0; i--) {
                 const sqData = catchDB[i] || catchDB[catchDB.length-1];
                 let z = ''; if(i===0||i===50) z='finish-zone'; else if(i<=12) z='blue-zone'; else if(i<=25) z='purple-zone'; else if(i<=37) z='pink-zone'; else z='red-zone';
@@ -655,7 +627,6 @@
             });
         }
         function rollCatchDice() {
-            playSound('click');
             const btn = document.getElementById('catch-dice'); if(btn.classList.contains('rolling')) return;
             btn.innerText = "🎲"; btn.classList.add('rolling');
             setTimeout(() => {
@@ -666,22 +637,11 @@
         function moveCatchPlayer(steps) {
             const p = catchPlayers[cTurn]; let moved = 0;
             const intv = setInterval(() => {
-                if(p.pos < 50) { 
-                    p.pos++; 
-                    updateTokens(); 
-                    moved++; 
-                    // حفظ تلقائي للخطوة
-                    localStorage.setItem('hn_catch_p1', catchPlayers[0].pos);
-                    localStorage.setItem('hn_catch_p2', catchPlayers[1].pos);
-                }
-                if(moved >= steps || p.pos >= 50) { 
-                    clearInterval(intv); 
-                    setTimeout(()=>showCatchChallenge(p.pos), 500); 
-                }
+                if(p.pos < 50) { p.pos++; updateTokens(); moved++; }
+                if(moved >= steps || p.pos >= 50) { clearInterval(intv); setTimeout(()=>showCatchChallenge(p.pos), 500); }
             }, 300);
         }
         function showCatchChallenge(pos) {
-            playSound('win');
             if(pos === 0) { switchCTurn(); return; }
             const data = catchDB[pos] || catchDB[catchDB.length-1];
             const modal = document.getElementById('catch-modal'); const content = document.getElementById('catch-card-content');
@@ -691,24 +651,12 @@
             modal.style.display = 'flex';
         }
         function closeCatchModal() {
-            playSound('click');
             document.getElementById('catch-modal').style.display = 'none';
-            if(catchPlayers[cTurn].pos >= 50) { 
-                alert(`مبروك! ${catchPlayers[cTurn].name} كسب الليلة! 🎉`); 
-                catchPlayers[0].pos=0; catchPlayers[1].pos=0; updateTokens(); cTurn=0; 
-                // تصفير الحفظ عند الفوز
-                localStorage.removeItem('hn_catch_p1'); localStorage.removeItem('hn_catch_p2');
-            } else { switchCTurn(); }
+            if(catchPlayers[cTurn].pos >= 50) { alert(`مبروك! ${catchPlayers[cTurn].name} كسب الليلة! 🎉`); catchPlayers[0].pos=0; catchPlayers[1].pos=0; updateTokens(); cTurn=0; } else { switchCTurn(); }
         }
-        function switchCTurn() { 
-            cTurn = (cTurn === 0) ? 1 : 0; 
-            localStorage.setItem('hn_catch_turn', cTurn); // حفظ الدور
-            const p = catchPlayers[cTurn]; 
-            document.getElementById('catch-player').innerText = `${p.name} ${p.icon}`; 
-            document.getElementById('catch-pos').innerText = p.pos===0?"Start":p.pos; 
-        }
+        function switchCTurn() { cTurn = (cTurn === 0) ? 1 : 0; const p = catchPlayers[cTurn]; document.getElementById('catch-player').innerText = `${p.name} ${p.icon}`; document.getElementById('catch-pos').innerText = p.pos===0?"Start":p.pos; }
 
-        // --- Spin Wheel ---
+        // --- Spin Wheel (Conic Clean) ---
         let wheelCreated = false; let currentRotation = 0; let spinTurn = 0; 
         const spinPlayers = [ { name: "الزوج", icon: "👨" }, { name: "الزوجة", icon: "👩" } ];
         function startSpinGame() { show('spin-game-area'); if (!wheelCreated) { createWheelClean(); wheelCreated = true; } updateSpinUI(); }
@@ -729,7 +677,6 @@
         function spinWheel() {
             const bg = document.getElementById('wheel-bg'); const icons = document.getElementById('wheel-icons');
             const spinBtn = document.querySelector('#spin-game-area .btn-gold'); if(spinBtn.disabled) return;
-            playSound('click');
             spinBtn.disabled = true; const randomDeg = Math.floor(1800 + Math.random() * 1800); currentRotation += randomDeg;
             bg.style.transform = `rotate(${currentRotation}deg)`; icons.style.transform = `rotate(${currentRotation}deg)`;
             setTimeout(() => {
@@ -739,14 +686,8 @@
                 showWheelResult(wheelSegments[winningIndex]); spinBtn.disabled = false;
             }, 4000); 
         }
-        function showWheelResult(res) { 
-            playSound('win');
-            const modal = document.getElementById('wheel-modal'); document.getElementById('wheel-result-icon').innerText = res.icon; document.getElementById('wheel-result-title').innerText = res.text; document.getElementById('wheel-result-desc').innerText = res.desc; modal.style.display = 'flex'; 
-        }
-        function closeWheelModal() { 
-            playSound('click');
-            document.getElementById('wheel-modal').style.display = 'none'; spinTurn = (spinTurn === 0) ? 1 : 0; updateSpinUI(); 
-        }
+        function showWheelResult(res) { const modal = document.getElementById('wheel-modal'); document.getElementById('wheel-result-icon').innerText = res.icon; document.getElementById('wheel-result-title').innerText = res.text; document.getElementById('wheel-result-desc').innerText = res.desc; modal.style.display = 'flex'; }
+        function closeWheelModal() { document.getElementById('wheel-modal').style.display = 'none'; spinTurn = (spinTurn === 0) ? 1 : 0; updateSpinUI(); }
 
     </script>
 </body>
