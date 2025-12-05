@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hot Night 🔥 | النسخة الكاملة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="preload" as="image" href="images/cover1.webp">
+    <link rel="preload" as="image" href="images/cover2.webp">
+    <link rel="preload" as="image" href="images/cover3.webp">
+    <link rel="preload" as="image" href="images/cover4.webp">
+    <link rel="preload" as="image" href="images/cover5.webp">
+    <link rel="preload" as="image" href="images/cover6.webp">
+    <link rel="preload" as="image" href="images/cover7.webp">
+    <link rel="preload" as="image" href="images/cover8.webp">
+    <link rel="preload" as="image" href="images/cover9.webp">
+
     <style>
         :root {
             --primary: #d4af37; /* ذهبي */
@@ -35,7 +46,7 @@
         }
         .screen.active { display: flex; opacity: 1; }
 
-        /* --- Top Nav --- */
+        /* --- الشريط العلوي --- */
         .top-nav {
             width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 15px; padding: 0 5px; height: 40px; flex-shrink: 0;
@@ -61,7 +72,8 @@
         .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 500px; padding-bottom: 20px; }
         .game-item { position: relative; aspect-ratio: 1 / 1; border-radius: 18px; overflow: hidden; cursor: pointer; border: 1px solid #333; }
         .game-item.full-width { grid-column: span 2; aspect-ratio: auto; height: 100px; }
-        .game-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; } /* تعديل الشفافية */
+        .game-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: transform 0.3s; }
+        .game-item:active img { transform: scale(1.05); }
         .game-label { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to top, black, rgba(0,0,0,0.5)); text-align: center; }
         .g-title { font-size: 1rem; font-weight: 800; color: white; margin-bottom: 2px;} 
         .g-sub { font-size: 0.7rem; color: var(--primary); font-weight: bold; }
@@ -77,7 +89,7 @@
         .instr-point { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
         .instr-icon { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
 
-        /* --- Card Styles --- */
+        /* --- Game Styles (Flip Cards) --- */
         .card-stage { perspective: 1000px; width: 100%; max-width: 320px; height: 320px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: 0.6s; }
         .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
@@ -86,10 +98,11 @@
         .flipped { transform: rotateY(180deg); }
         .text-content { font-size: 1.35rem; font-weight: bold; color: #fff; }
 
+        /* --- Roleplay Style --- */
         .rp-box { background: #111; border: 1px solid var(--accent); border-radius: 20px; padding: 25px; width: 100%; max-width: 350px; text-align: right; }
         .rp-val { color: white; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
 
-        /* Elimination & Catch Me Styles */
+        /* --- Game 3: Elimination (Text Version) --- */
         .elimination-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 350px; margin: 20px auto; }
         .place-card { aspect-ratio: 1 / 1; border-radius: 15px; background: #222; border: 2px solid var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .place-icon { font-size: 2.5rem; margin-bottom: 5px; }
@@ -99,6 +112,7 @@
         .place-card.winner .place-name { color: black; }
         .turn-banner { background: rgba(255,255,255,0.1); color: var(--primary); padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; border: 1px solid var(--primary); font-size: 0.9rem; }
 
+        /* --- Game 7: Catch Me (Compact 50) --- */
         .board-container { flex-grow: 0; height: auto; overflow-y: hidden; padding: 5px; display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; gap: 3px; width: 100%; background-image: radial-gradient(#222 1px, transparent 1px); background-size: 15px 15px; margin-bottom: 5px; border-radius: 15px; border: 1px solid #333; }
         .row { display: flex; gap: 3px; justify-content: center; width: 100%; }
         .square { width: 38px; height: 38px; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.8rem; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
@@ -119,12 +133,12 @@
         .catch-desc { font-size: 1rem; color: #ddd; line-height: 1.6; margin-bottom: 20px; }
 
         /* ==================================================
-           STYLES: WHEEL OF FORTUNE (Clean & Conic)
+           STYLES: WHEEL OF FORTUNE (PRO CONIC VERSION)
            ================================================== */
         .spin-header { text-align: center; margin-bottom: 20px; background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 15px; border: 1px solid var(--green); display: flex; justify-content: center; gap: 10px; }
         .wheel-container { width: 330px; height: 330px; position: relative; border-radius: 50%; border: 8px solid #222; box-shadow: 0 0 40px rgba(46, 204, 113, 0.3); overflow: hidden; margin: 0 auto; }
         
-        /* القرص الملون */
+        /* القرص الملون بتدرج مخروطي نظيف */
         .wheel-bg { width: 100%; height: 100%; border-radius: 50%; position: absolute; top:0; left:0; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
         /* طبقة الأيقونات */
         .wheel-icons-layer { width: 100%; height: 100%; border-radius: 50%; position: absolute; top:0; left:0; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
@@ -204,44 +218,45 @@
             <button class="guide-btn" onclick="openGuide()">الدليل 🗺️</button>
         </div>
         
-<div class="games-grid">
+        <div class="games-grid">
             <div class="game-item" onclick="openInstructions('game1')">
-                <img src="images/cover1.png" alt="Fun">
+                <img src="images/cover1.webp" onerror="this.src='images/cover1.png'" alt="Fun" loading="eager">
                 <div class="game-label"><div class="g-title">1. هزار ونار</div><div class="g-sub">ضحك وذكريات</div></div>
             </div>
             <div class="game-item" onclick="openInstructions('game2')">
-                <img src="images/cover2.png" alt="Love">
+                <img src="images/cover2.webp" onerror="this.src='images/cover2.png'" alt="Love" loading="eager">
                 <div class="game-label"><div class="g-title">2. حب وقرب</div><div class="g-sub">رومانسية ومشاعر</div></div>
             </div>
             <div class="game-item" onclick="openInstructions('game3')" style="border-color: #ff9800;">
-                <img src="images/cover3.png" alt="Places">
+                <img src="images/cover3.webp" onerror="this.src='images/cover3.png'" alt="Places" loading="eager">
                 <div class="game-label"><div class="g-title" style="color:#ff9800">3. أرض المعركة ⚔️</div><div class="g-sub">تحديد مكان السهرة</div></div>
             </div>
             <div class="game-item" onclick="openInstructions('game4')">
-                <img src="images/cover4.png" alt="Touch">
+                <img src="images/cover4.webp" onerror="this.src='images/cover4.png'" alt="Touch" loading="eager">
                 <div class="game-label"><div class="g-title">4. همس ولمس</div><div class="g-sub">إثارة حسية</div></div>
             </div>
             <div class="game-item" onclick="openInstructions('game5')" style="border-color: var(--accent);">
-                <img src="images/cover5.png" alt="Hot">
+                <img src="images/cover5.webp" onerror="this.src='images/cover5.png'" alt="Hot" loading="eager">
                 <div class="game-label"><div class="g-title" style="color:var(--accent)">5. نار ودمار</div><div class="g-sub">تحديات جريئة</div></div>
             </div>
             <div class="game-item" onclick="openInstructions('game6')">
-                <img src="images/cover6.png" alt="Roleplay">
+                <img src="images/cover6.webp" onerror="this.src='images/cover6.png'" alt="Roleplay" loading="eager">
                 <div class="game-label"><div class="g-title">6. تمثيل ساخن</div><div class="g-sub">سيناريوهات</div></div>
             </div>
             <div class="game-item" onclick="openInstructions('game7')" style="border-color: var(--blue);">
-                <img src="images/cover7.png" alt="Catch Me">
+                <img src="images/cover7.webp" onerror="this.src='images/cover7.png'" alt="Catch Me" loading="eager">
                 <div class="game-label"><div class="g-title" style="color:var(--blue)">7. رحلة المتعة 🎲</div><div class="g-sub">السلم والثعبان</div></div>
             </div>
             <div class="game-item" onclick="openInstructions('game8')" style="border-color: var(--green);">
-                <img src="images/cover8.png" alt="Spin">
+                <img src="images/cover8.webp" onerror="this.src='images/cover8.png'" alt="Spin" loading="eager">
                 <div class="game-label"><div class="g-title" style="color:var(--green)">8. عجلة الأوضاع 🎡</div><div class="g-sub">لف ونفذ</div></div>
             </div>
             <div class="game-item full-width" onclick="openInstructions('game9')">
-                <img src="images/cover9.jpeg" alt="Gift">
+                <img src="images/cover9.webp" onerror="this.src='images/cover9.jpeg'" alt="Gift" loading="eager">
                 <div class="game-label"><div class="g-title">9. دلع وولع 🎁</div><div class="g-sub">جائزة الختام</div></div>
             </div>
         </div>
+    </div>
 
     <div id="gameplay" class="screen">
         <div class="top-nav">
@@ -344,47 +359,47 @@
         const gameInstructions = {
             game1: {
                 title: "1. هزار ونار 😂",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> كسر الملل والروتين، والضحك سوا عشان تصفوا ذهنكم للي جاي.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> اللعبة عبارة عن كروت فيها أسئلة مضحكة ومواقف محرجة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> اسحبوا 10 كروت (5 لكل واحد). جاوبوا بصراحة وبدون زعل، والممنوعات مسموحة هنا!</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> كسر الملل والضحك.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> اسحبوا 10 كروت وجاوبوا بصراحة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> ممنوع الزعل هنا، جاوبوا على الأسئلة وضحكوا من قلبكم!</div></div>`,
                 action: () => startGame('stage1')
             },
             game2: {
                 title: "2. حب وقرب ❤️",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> استعادة الرومانسية وتجديد مشاعر الحب اللي بتستخبى وسط مشاغل اليوم.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> كروت فيها أسئلة عميقة عن ذكرياتكم وأحلامكم.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> اسحبوا 5 كروت. بصوا في عين بعض وأنتم بتجاوبوا، وامسكوا إيد بعض عشان التواصل يزيد.</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تجديد الرومانسية.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> اسحبوا كروت المشاعر وجاوبوا من القلب.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> بصوا في عين بعض أثناء الكلام.</div></div>`,
                 action: () => startGame('stage2')
             },
             game3: {
                 title: "3. أرض المعركة ⚔️",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تحديد مكان العلاقة (السرير، الصالة، إلخ) بالتراضي وبطريقة ممتعة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> قدامكم 9 أماكن محتملة في البيت.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> الزوج يبدأ يحذف مكان "مش عايزه"، وبعدين الزوجة تحذف مكان، وهكذا بالتبادل لحد ما يتبقى مكان واحد بس.. هو ده اللي هتقضوا فيه السهرة!</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تحديد مكان السهرة بالتراضي.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> احذفوا الأماكن بالتبادل لحد ما يتبقى مكان واحد.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> المكان الأخير هو اللي هيحصل فيه الأكشن!</div></div>`,
                 action: () => startEliminationGame()
             },
             game4: {
                 title: "4. همس ولمس 🔥",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> التسخين الحسي (Foreplay) وإشعال الرغبة قبل العلاقة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> كروت فيها أوامر حسية (لمس، قبلات، مساج).</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> اسحبوا من 7 لـ 10 كروت. نفذوا المكتوب ببطء وهدوء.. ممنوع الاستعجال هنا خالص.</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> التسخين والمداعبة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> نفذوا الكروت الحسية بهدوء.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> ممنوع الاستعجال، خدوا وقتكم في كل لمسة.</div></div>`,
                 action: () => startGame('stage3')
             },
             game5: {
                 title: "5. نار ودمار 🔞",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> الوصول لأقصى درجات المتعة وتجربة حاجات جديدة وجريئة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> كروت فيها أوضاع وتحديات للكبار فقط (Hardcore).</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> العبوا براحتكم لحد ما تتعبوا! اللي يطلعله كارت لازم ينفذه فوراً وبدون نقاش.</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> قمة المتعة والأكشن.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> كروت جريئة جداً للتنفيذ الفوري.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> كل كارت لازم يتنفذ، مفيش انسحاب!</div></div>`,
                 action: () => startGame('stage4')
             },
             game6: {
                 title: "6. تمثيل ساخن 🎭",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تقمص شخصيات (Roleplay) لكسر الروتين وتجربة خيالات جديدة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> اضغط الزر ليظهر لك سيناريو كامل (الشخصيات، الملابس، القصة).</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> جهزوا اللبس المطلوب (أو أقرب حاجة ليه)، وانسوا شخصيتكم الحقيقية وعيشوا الدور للآخر.</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تقمص أدوار جديدة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> عيشوا السيناريو اللي يطلعلكم بكل تفاصيله.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> انسوا شخصياتكم الحقيقية وعيشوا الدور.</div></div>`,
                 action: () => startRoleplay()
             },
             game7: {
                 title: "7. رحلة المتعة 🎲",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> لعبة تنافسية (زي السلم والثعبان) بتمر بمراحل متدرجة من الجرأة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> ارمي النرد وحرك البيدق. كل مربع عليه تحدي لازم تنفذه عشان تكمل.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> اللعبة 50 خطوة (أزرق: تسخين -> بنفسجي: إثارة -> وردي: متعة -> أحمر: أكشن). أول واحد يوصل للنهاية هو الكسبان!</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> الوصول للنهاية قبل شريكك.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> ارمي النرد ونفذ التحدي اللي في المربع.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> اللعبة 50 خطوة متدرجة (أزرق -> بنفسجي -> وردي -> أحمر).</div></div>`,
                 action: () => startCatchMe()
             },
             game8: {
                 title: "8. عجلة الأوضاع 🎡",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> ترك الاختيار للصدفة والحظ لتجربة أوضاع مختلفة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> عجلة دوارة فيها 16 اختيار متنوع (أوضاع، أفعال، سيطرة).</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> كل واحد يلف العجلة مرة، وينفذ اللي يطلعه بالحرف.</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> اختيار عشوائي للأوضاع.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> لف العجلة ونفذ الأمر اللي السهم يشاور عليه.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> الحظ هو اللي بيحكم، ولازم التنفيذ!</div></div>`,
                 action: () => startSpinGame()
             },
             game9: {
                 title: "9. دلع وولع 🎁",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> مكافأة ما بعد العلاقة (Aftercare) وتدليل الشريك.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>الطريقة:</strong> كارت خربشة (Scratch Card) مخفي تحته جايزة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>القواعد:</strong> بعد ما تخلصوا سهرتكم، كل واحد يخربش كارت ويشوف كسب إيه (مساج، فطار، إعفاء من طلبات...).</div></div>`,
+                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> مكافأة الختام.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> خربش الكارت وشوف هديتك.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> الجائزة دي حقك وممكن تطلبها في أي وقت.</div></div>`,
                 action: () => initScratch()
             }
         };
@@ -403,24 +418,31 @@
         }
 
         // ==========================================
-        // 2. DATA (البيانات)
+        // 2. DATA (يرجى وضع الداتا الكاملة هنا)
         // ==========================================
-        // انسخ هنا الداتا الكاملة للأسئلة والسيناريوهات
+        
+        // ⚠ تنبيه: للحصول على أفضل تجربة، يرجى نسخ المحتوى النصي الكامل (500+ عنصر) 
+        // الذي أرسلته لك في الردود السابقة ووضعه هنا داخل متغير db و catchDB.
+        // هذا نموذج مختصر للتشغيل.
+        
         const db = {
-            // (عينة فقط)
-            stage1: [{ t: "m", q: "قلد صوت حماتك." }],
-            stage2: [{ t: "b", q: "حضن دقيقة." }],
-            stage3: [{ t: "m", q: "بوس الرقبة." }],
-            stage4: [{ t: "f", q: "انتي الملكة." }],
-            prizes: ["مساج كامل"],
-            roleplays: [{ chars: "الدكتور", wear: "بالطو", plot: "كشف." }]
+            stage1: [{ t: "m", q: "قلد صوت حماتك." }, { t: "f", q: "ارقصي بلدي." }, { t: "b", q: "مسابقة نظرات." }], 
+            stage2: [{ t: "b", q: "حضن دقيقة صمت." }, { t: "m", q: "أوصفها بكلمة." }, { t: "f", q: "سر مخبياه." }],
+            stage3: [{ t: "m", q: "بوس الرقبة." }, { t: "f", q: "مساج للظهر." }, { t: "b", q: "تلامس بدون بوس." }],
+            stage4: [{ t: "f", q: "انتي الملكة." }, { t: "m", q: "وضع الدوجي." }, { t: "b", q: "علاقة في الصالة." }],
+            prizes: ["مساج كامل", "فطار في السرير", "عزومة كشري", "إعفاء من المواعين"],
+            roleplays: [
+                { chars: "الدكتور والمريضة", wear: "بالطو", plot: "كشف شامل يتحول لمداعبة." },
+                { chars: "المدرس والطالبة", wear: "نضارة", plot: "عقاب مدرسي مثير." }
+            ]
         };
 
-        // انسخ هنا الداتا الكاملة لـ Catch Me (50 مربع)
         const catchDB = [
             { type: "start", text: "البداية", icon: "🏁", desc: "نقطة الانطلاق" },
+            // ... (انسخ الـ 50 مربع هنا للحصول على اللعبة الكاملة) ...
             { type: "blue", text: "بوسة", desc: "بوسة رقيقة", icon: "💋" },
-            { type: "finish", text: "النهاية", desc: "مبروك!", icon: "🎉" }
+            { type: "blue", text: "همسة", desc: "كلمة بحبك", icon: "👂" },
+            { type: "finish", text: "النهاية", desc: "مبروك! علاقة كاملة 🔥", icon: "🎉" }
         ];
 
         const placesData = [
@@ -587,6 +609,7 @@
         function createCatchBoard() {
             const board = document.getElementById('board'); board.innerHTML = "";
             let row = document.createElement('div'); row.className = 'row';
+            // 50 Squares Loop
             for (let i = 50; i >= 0; i--) {
                 const sqData = catchDB[i] || catchDB[catchDB.length-1];
                 let z = ''; if(i===0||i===50) z='finish-zone'; else if(i<=12) z='blue-zone'; else if(i<=25) z='purple-zone'; else if(i<=37) z='pink-zone'; else z='red-zone';
