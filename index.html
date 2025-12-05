@@ -353,7 +353,7 @@
             </div>
         </div>
 
-        <button class="reset-btn" onclick="resetCatchGame()">ابدأ من جديد 🔄</button>
+        <button class="reset-btn" onclick="openConfirmModal()">ابدأ من جديد 🔄</button>
     </div>
 
     <div id="spin-game-area" class="screen">
@@ -802,27 +802,58 @@
             location.reload();
         }
 
-        function resetCatchGame() {
-            // رسالة تأكيد عشان لو داسوا بالغلط اللعبة متبوظش
-            if(confirm("هل أنتم متأكدين؟ هيتم مسح التقدم والبدء من نقطة الصفر!")) {
-                playSound('click');
-                
-                // 1. تصفير المتغيرات في الكود
-                catchPlayers[0].pos = 0;
-                catchPlayers[1].pos = 0;
-                cTurn = 0; // الدور يرجع للزوج
+        // ==========================================
+        // RESET GAME LOGIC (النظام الجديد)
+        // ==========================================
 
-                // 2. مسح الذاكرة من المتصفح (Local Storage)
-                localStorage.removeItem('hn_catch_p1');
-                localStorage.removeItem('hn_catch_p2');
-                localStorage.removeItem('hn_catch_turn');
+        function openConfirmModal() {
+            playSound('click');
+            document.getElementById('confirm-modal').style.display = 'flex';
+            setTimeout(() => document.getElementById('confirm-modal').classList.add('show'), 10);
+        }
 
-                // 3. تحديث الشاشة
-                updateTokens(); // رجوع البيادق للبداية
-                document.getElementById('catch-player').innerText = `${catchPlayers[0].name} ${catchPlayers[0].icon}`;
-                document.getElementById('catch-pos').innerText = "Start";
-            }
+        function closeConfirmModal() {
+            playSound('click');
+            document.getElementById('confirm-modal').classList.remove('show');
+            setTimeout(() => document.getElementById('confirm-modal').style.display = 'none', 300);
+        }
+
+        function executeReset() {
+            playSound('click');
+            
+            // 1. تصفير المتغيرات في الذاكرة الحالية
+            catchPlayers[0].pos = 0;
+            catchPlayers[1].pos = 0;
+            cTurn = 0; 
+
+            // 2. مسح الذاكرة من المتصفح (LocalStorage)
+            localStorage.removeItem('hn_catch_p1');
+            localStorage.removeItem('hn_catch_p2');
+            localStorage.removeItem('hn_catch_turn');
+
+            // 3. تحديث الواجهة فوراً (إرجاع البيادق للصفر)
+            updateTokens(); 
+            
+            // 4. تحديث النصوص (الدور والمكان)
+            document.getElementById('catch-player').innerText = `${catchPlayers[0].name} ${catchPlayers[0].icon}`;
+            document.getElementById('catch-pos').innerText = "Start";
+
+            // 5. إغلاق النافذة
+            closeConfirmModal();
+            
+            // هزاز للتأكيد
+            if(navigator.vibrate) navigator.vibrate(200);
         }
     </script>
+    <div id="confirm-modal" class="modal-glass">
+        <div class="instr-content" style="text-align:center; max-width:300px;">
+            <div class="instr-title" style="color:var(--accent); border:none; margin-bottom:5px;">⚠️ تنبيه</div>
+            <p style="color:#ddd; margin-bottom:25px; font-size:1rem;">هل أنت متأكد؟<br>هيتم مسح التقدم والبدء من نقطة الصفر!</p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="btn-gold" style="background:var(--accent); color:white; width:100px;" onclick="executeReset()">نعم</button>
+                <button class="btn-gold" style="background:#333; color:#ccc; width:100px;" onclick="closeConfirmModal()">لا</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
