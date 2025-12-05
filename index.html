@@ -180,6 +180,18 @@
         /* الانيميشن */
         @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 20px); } }
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* تنسيق صورة مجموعة الألعاب الجديدة */
+        .game-collection-img {
+            width: 150px;          /* التحكم في عرض الصورة (ممكن تزوده أو تقلله) */
+            height: auto;          /* للحفاظ على نسبة الطول للعرض */
+            margin-bottom: 15px;   /* مسافة بين الصورة وكلمة Hot Night */
+            border-radius: 15px;   /* تدوير حواف الصورة بشكل ناعم */
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); /* ظل ذهبي خفيف تحت الصورة */
+            display: block;        /* لضمان إنها تيجي في سطر لوحدها */
+            margin-left: auto;     /* لتوسيط الصورة أفقياً */
+            margin-right: auto;    /* لتوسيط الصورة أفقياً */
+        }
     </style>
 </head>
 <body>
@@ -239,7 +251,7 @@
         <div class="blob blob-2"></div>
 
         <div class="login-card-pro">
-            <div style="font-size:3rem; margin-bottom:10px;">🔥</div>
+            <img src="games-collection.png" class="game-collection-img" alt="مجموعة الألعاب الزوجية">
             <div class="logo-pro">HOT NIGHT</div>
             <p class="subtitle-pro">
                 تجربة زوجية فاخرة<br>
