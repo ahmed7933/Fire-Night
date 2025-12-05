@@ -1,4 +1,358 @@
-<script>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hot Night 🔥 | النسخة الكاملة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="preload" as="image" href="images/cover1.webp">
+    <link rel="preload" as="image" href="images/cover2.webp">
+    <link rel="preload" as="image" href="images/cover3.webp">
+    <link rel="preload" as="image" href="images/cover4.webp">
+    <link rel="preload" as="image" href="images/cover5.webp">
+    <link rel="preload" as="image" href="images/cover6.webp">
+    <link rel="preload" as="image" href="images/cover7.webp">
+    <link rel="preload" as="image" href="images/cover8.webp">
+    <link rel="preload" as="image" href="images/cover9.webp">
+
+    <style>
+        :root {
+            --primary: #d4af37; /* ذهبي */
+            --accent: #e50914; /* أحمر */
+            --blue: #00bfff;
+            --purple: #8a2be2;
+            --pink: #ff00cc;
+            --green: #2ecc71;
+            --bg: #050505;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
+
+        body {
+            margin: 0; background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, #150505 0%, #000 90%);
+            font-family: 'Cairo', sans-serif; color: white;
+            height: 100vh; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* --- الشاشات --- */
+        .screen {
+            display: none; width: 100%; height: 100%;
+            position: relative; z-index: 2;
+            flex-direction: column; align-items: center;
+            padding: 15px; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in;
+        }
+        .screen.active { display: flex; opacity: 1; }
+
+        /* --- الشريط العلوي --- */
+        .top-nav {
+            width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; padding: 0 5px; height: 40px; flex-shrink: 0;
+        }
+        .nav-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin: 0; text-align: center; flex-grow: 1; }
+        .exit-btn {
+            background: rgba(255,255,255,0.1); border: 1px solid #444; color: #aaa; width: 35px; height: 35px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; transition: 0.3s; flex-shrink: 0;
+        }
+        .dummy-space { width: 35px; }
+
+        /* --- Login & Dashboard --- */
+        .login-box { background: rgba(20, 20, 20, 0.9); border: 1px solid rgba(212, 175, 55, 0.3); padding: 30px 20px; border-radius: 25px; text-align: center; width: 100%; max-width: 350px; }
+        .input-vip { background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 12px; border-radius: 50px; color: var(--primary); width: 100%; text-align: center; font-size: 1.2rem; margin-bottom: 20px; }
+        .btn-gold {
+            background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); background-size: 200%; color: black; font-weight: bold;
+            padding: 12px; width: 100%; border-radius: 50px; border: none; font-size: 1rem; cursor: pointer; animation: shine 4s infinite linear;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+        .dashboard-header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; }
+        .guide-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
+        
+        .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 500px; padding-bottom: 20px; }
+        .game-item { position: relative; aspect-ratio: 1 / 1; border-radius: 18px; overflow: hidden; cursor: pointer; border: 1px solid #333; }
+        .game-item.full-width { grid-column: span 2; aspect-ratio: auto; height: 100px; }
+        .game-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: transform 0.3s; }
+        .game-item:active img { transform: scale(1.05); }
+        .game-label { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to top, black, rgba(0,0,0,0.5)); text-align: center; }
+        .g-title { font-size: 1rem; font-weight: 800; color: white; margin-bottom: 2px;} 
+        .g-sub { font-size: 0.7rem; color: var(--primary); font-weight: bold; }
+
+        /* --- Modals & Instructions --- */
+        .modal-glass { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-glass.show { display: flex; animation: fadeIn 0.3s; }
+        .guide-content { background: #151515; border: 1px solid var(--primary); border-radius: 20px; width: 100%; max-width: 400px; padding: 25px; text-align: right; max-height: 85vh; overflow-y: auto; }
+        .step-box { background: rgba(255,255,255,0.05); border-right: 3px solid var(--primary); padding: 12px; margin-bottom: 12px; border-radius: 8px; }
+        .instr-content { background: #151515; border: 1px solid var(--primary); border-radius: 20px; width: 100%; max-width: 450px; padding: 25px; text-align: right; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .instr-title { color: var(--primary); font-size: 1.5rem; font-weight: 900; margin-bottom: 15px; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .instr-body { color: #ccc; font-size: 0.95rem; line-height: 1.7; margin-bottom: 25px; }
+        .instr-point { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+        .instr-icon { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
+
+        /* --- Game Styles (Flip Cards) --- */
+        .card-stage { perspective: 1000px; width: 100%; max-width: 320px; height: 320px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: 0.6s; }
+        .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .front { background: #111 url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
+        .back { background: #151515; transform: rotateY(180deg); }
+        .flipped { transform: rotateY(180deg); }
+        .text-content { font-size: 1.35rem; font-weight: bold; color: #fff; }
+
+        /* --- Roleplay Style --- */
+        .rp-box { background: #111; border: 1px solid var(--accent); border-radius: 20px; padding: 25px; width: 100%; max-width: 350px; text-align: right; }
+        .rp-val { color: white; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+
+        /* --- Game 3: Elimination (Text Version) --- */
+        .elimination-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 350px; margin: 20px auto; }
+        .place-card { aspect-ratio: 1 / 1; border-radius: 15px; background: #222; border: 2px solid var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .place-icon { font-size: 2.5rem; margin-bottom: 5px; }
+        .place-name { font-size: 0.9rem; font-weight: bold; color: white; }
+        .place-card.eliminated { background: #111; border-color: #333; opacity: 0.3; transform: scale(0.9); filter: grayscale(100%); }
+        .place-card.winner { background: var(--primary); border-color: white; transform: scale(1.1); z-index: 10; box-shadow: 0 0 20px var(--primary); }
+        .place-card.winner .place-name { color: black; }
+        .turn-banner { background: rgba(255,255,255,0.1); color: var(--primary); padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; border: 1px solid var(--primary); font-size: 0.9rem; }
+
+        /* --- Game 7: Catch Me (Compact 50) --- */
+        .board-container { flex-grow: 0; height: auto; overflow-y: hidden; padding: 5px; display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; gap: 3px; width: 100%; background-image: radial-gradient(#222 1px, transparent 1px); background-size: 15px 15px; margin-bottom: 5px; border-radius: 15px; border: 1px solid #333; }
+        .row { display: flex; gap: 3px; justify-content: center; width: 100%; }
+        .square { width: 38px; height: 38px; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.8rem; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+        .blue-zone { background: linear-gradient(135deg, #00bfff, #0077be); }
+        .purple-zone { background: linear-gradient(135deg, #8a2be2, #4b0082); }
+        .pink-zone { background: linear-gradient(135deg, #ff00cc, #99007a); }
+        .red-zone { background: linear-gradient(135deg, #ff0055, #990033); }
+        .finish-zone { background: linear-gradient(135deg, var(--primary), #b8860b); color: black; }
+        .player-token { width: 14px; height: 14px; border-radius: 50%; position: absolute; border: 1px solid white; box-shadow: 0 0 3px black; transition: all 0.5s ease; z-index: 5; }
+        .p1-token { background: var(--primary); top: 1px; left: 1px; }
+        .p2-token { background: white; bottom: 1px; right: 1px; }
+        .catch-controls { padding: 5px; height: 60px; background: #1a1a1a; border-top: 2px solid var(--blue); width: 100%; display: flex; justify-content: space-around; align-items: center; border-radius: 15px; flex-shrink: 0; }
+        .dice-btn { width: 50px; height: 50px; background: white; color: black; border-radius: 10px; font-size: 1.5rem; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 0 10px var(--blue); display: flex; justify-content: center; align-items: center; }
+        .dice-btn.rolling { animation: shake 0.5s infinite; }
+        .catch-card { background: #151515; width: 90%; max-width: 350px; border-radius: 20px; padding: 25px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 0 50px rgba(0, 191, 255, 0.1); }
+        .catch-icon { font-size: 3rem; margin-bottom: 10px; }
+        .catch-title { font-size: 1.4rem; color: var(--primary); margin-bottom: 10px; font-weight: 900; }
+        .catch-desc { font-size: 1rem; color: #ddd; line-height: 1.6; margin-bottom: 20px; }
+
+        /* ==================================================
+           STYLES: WHEEL OF FORTUNE (PRO CONIC VERSION)
+           ================================================== */
+        .spin-header { text-align: center; margin-bottom: 20px; background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 15px; border: 1px solid var(--green); display: flex; justify-content: center; gap: 10px; }
+        .wheel-container { width: 330px; height: 330px; position: relative; border-radius: 50%; border: 8px solid #222; box-shadow: 0 0 40px rgba(46, 204, 113, 0.3); overflow: hidden; margin: 0 auto; }
+        
+        /* القرص الملون بتدرج مخروطي نظيف */
+        .wheel-bg { width: 100%; height: 100%; border-radius: 50%; position: absolute; top:0; left:0; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
+        /* طبقة الأيقونات */
+        .wheel-icons-layer { width: 100%; height: 100%; border-radius: 50%; position: absolute; top:0; left:0; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
+        
+        .icon-box { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+        .icon-content { position: absolute; left: -20px; bottom: 65px; width: 40px; text-align: center; font-size: 1.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); color: white; }
+        
+        .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 45px solid #fff; z-index: 20; filter: drop-shadow(0 4px 4px black); }
+        .wheel-result-card { background: #111; border: 3px solid var(--green); padding: 25px; border-radius: 25px; text-align: center; width: 90%; max-width: 380px; box-shadow: 0 0 50px rgba(46, 204, 113, 0.2); }
+        #wheel-result-desc { color: #ddd; font-size: 1.1rem; line-height: 1.6; margin: 20px 0; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid #333; }
+
+        @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } 100% { transform: rotate(0deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div id="modal-guide" class="modal-glass">
+        <div class="guide-content">
+            <h2 style="color:white; text-align:center; margin-top:0;">🌙 الخريطة الكاملة</h2>
+            <div class="step-box"><div class="step-head"><span>1. هزار ونار 😂</span></div><div class="step-desc">نبدأ بضحك وفرفشة.</div></div>
+            <div class="step-box"><div class="step-head"><span>2. حب وقرب ❤️</span></div><div class="step-desc">نشغل المشاعر شوية.</div></div>
+            <div class="step-box" style="border-color: #ff9800;"><div class="step-head"><span style="color:#ff9800">3. أرض المعركة ⚔️</span></div><div class="step-desc">نتفق (بالتراضي) هنعمل العلاقة فين.</div></div>
+            <div class="step-box"><div class="step-head"><span>4. همس ولمس 🔥</span></div><div class="step-desc">نروح المكان ونبدأ تسخين.</div></div>
+            <div class="step-box"><div class="step-head"><span style="color:var(--accent)">5. نار ودمار 🔞</span></div><div class="step-desc">اللقاء الكامل والأكشن.</div></div>
+            <div class="step-box" style="border: 1px dashed #666; margin-top:15px;"><div class="step-desc" style="text-align:center; font-weight:bold;">✨ ألعاب إضافية لتغيير الروتين ✨</div></div>
+            <div class="step-box"><div class="step-head"><span>6. تمثيل ساخن 🎭</span></div><div class="step-desc">سيناريوهات لتقمص الأدوار.</div></div>
+            <div class="step-box"><div class="step-head"><span style="color:var(--blue)">7. رحلة المتعة 🎲</span></div><div class="step-desc">لعبة السلم والثعبان الزوجية.</div></div>
+            <div class="step-box"><div class="step-head"><span style="color:var(--green)">8. عجلة الأوضاع 🎡</span></div><div class="step-desc">لف العجلة ونفذ الوضع أو الفعل اللي يطلعلك.</div></div>
+            <div class="step-box"><div class="step-head"><span>9. دلع وولع 🎁</span></div><div class="step-desc">جايزة "التحلية" في الختام.</div></div>
+            <button class="btn-gold" onclick="closeGuide()">فهمت.. يلا بينا 🚀</button>
+        </div>
+    </div>
+
+    <div id="instructions-screen" class="modal-glass">
+        <div class="instr-content">
+            <div id="instr-title" class="instr-title">عنوان اللعبة</div>
+            <div id="instr-body" class="instr-body"></div>
+            <button class="btn-gold" id="instr-start-btn">يلا نبدأ 🚀</button>
+            <button style="background:none; border:none; color:#888; margin-top:15px; width:100%; cursor:pointer;" onclick="document.getElementById('instructions-screen').classList.remove('show')">رجوع</button>
+        </div>
+    </div>
+
+    <div id="wheel-modal" class="modal-glass">
+        <div class="wheel-result-card">
+            <div id="wheel-result-icon" style="font-size:4rem; margin-bottom:5px;"></div>
+            <h2 id="wheel-result-title" style="color:var(--green); margin:0; font-weight:900; font-size:1.6rem;"></h2>
+            <p id="wheel-result-desc"></p>
+            <button class="btn-gold" style="background:linear-gradient(90deg, var(--green), #27ae60); border:none;" onclick="closeWheelModal()">نفذنا الأمر 😉</button>
+        </div>
+    </div>
+
+    <div id="catch-modal" class="modal-glass">
+        <div class="catch-card" id="catch-card-content"></div>
+    </div>
+
+    <div id="login" class="screen active" style="justify-content: center;">
+        <div class="login-box">
+            <div class="logo">🔥 Hot Night</div>
+            <p style="color:#888; margin-bottom: 30px; font-size: 0.9rem;">
+                النسخة الكاملة (9 ألعاب)<br>
+                <span style="color:var(--primary);">(للمتزوجين فقط +18)</span>
+            </p>
+            <input type="password" id="pass" class="input-vip" placeholder="CODE">
+            <button class="btn-gold" onclick="login()">دخول 🔓</button>
+            <p id="error" style="color:var(--accent); display:none; margin-top:15px;">الكود خاطئ</p>
+        </div>
+    </div>
+
+    <div id="dashboard" class="screen">
+        <div class="dashboard-header">
+            <div>
+                <h2 style="color:white; margin:0;">باقة السعادة 🔥</h2>
+                <p style="color:var(--primary); font-size:0.8rem; margin:5px 0 0 0;">9 تجارب مختلفة لليلة مثالية</p>
+            </div>
+            <button class="guide-btn" onclick="openGuide()">الدليل 🗺️</button>
+        </div>
+        
+        <div class="games-grid">
+            <div class="game-item" onclick="openInstructions('game1')">
+                <img src="images/cover1.webp" onerror="this.src='images/cover1.png'" alt="Fun" loading="eager">
+                <div class="game-label"><div class="g-title">1. هزار ونار</div><div class="g-sub">ضحك وذكريات</div></div>
+            </div>
+            <div class="game-item" onclick="openInstructions('game2')">
+                <img src="images/cover2.webp" onerror="this.src='images/cover2.png'" alt="Love" loading="eager">
+                <div class="game-label"><div class="g-title">2. حب وقرب</div><div class="g-sub">رومانسية ومشاعر</div></div>
+            </div>
+            <div class="game-item" onclick="openInstructions('game3')" style="border-color: #ff9800;">
+                <img src="images/cover3.webp" onerror="this.src='images/cover3.png'" alt="Places" loading="eager">
+                <div class="game-label"><div class="g-title" style="color:#ff9800">3. أرض المعركة ⚔️</div><div class="g-sub">تحديد مكان السهرة</div></div>
+            </div>
+            <div class="game-item" onclick="openInstructions('game4')">
+                <img src="images/cover4.webp" onerror="this.src='images/cover4.png'" alt="Touch" loading="eager">
+                <div class="game-label"><div class="g-title">4. همس ولمس</div><div class="g-sub">إثارة حسية</div></div>
+            </div>
+            <div class="game-item" onclick="openInstructions('game5')" style="border-color: var(--accent);">
+                <img src="images/cover5.webp" onerror="this.src='images/cover5.png'" alt="Hot" loading="eager">
+                <div class="game-label"><div class="g-title" style="color:var(--accent)">5. نار ودمار</div><div class="g-sub">تحديات جريئة</div></div>
+            </div>
+            <div class="game-item" onclick="openInstructions('game6')">
+                <img src="images/cover6.webp" onerror="this.src='images/cover6.png'" alt="Roleplay" loading="eager">
+                <div class="game-label"><div class="g-title">6. تمثيل ساخن</div><div class="g-sub">سيناريوهات</div></div>
+            </div>
+            <div class="game-item" onclick="openInstructions('game7')" style="border-color: var(--blue);">
+                <img src="images/cover7.webp" onerror="this.src='images/cover7.png'" alt="Catch Me" loading="eager">
+                <div class="game-label"><div class="g-title" style="color:var(--blue)">7. رحلة المتعة 🎲</div><div class="g-sub">السلم والثعبان</div></div>
+            </div>
+            <div class="game-item" onclick="openInstructions('game8')" style="border-color: var(--green);">
+                <img src="images/cover8.webp" onerror="this.src='images/cover8.png'" alt="Spin" loading="eager">
+                <div class="game-label"><div class="g-title" style="color:var(--green)">8. عجلة الأوضاع 🎡</div><div class="g-sub">لف ونفذ</div></div>
+            </div>
+            <div class="game-item full-width" onclick="openInstructions('game9')">
+                <img src="images/cover9.webp" onerror="this.src='images/cover9.jpeg'" alt="Gift" loading="eager">
+                <div class="game-label"><div class="g-title">9. دلع وولع 🎁</div><div class="g-sub">جائزة الختام</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameplay" class="screen">
+        <div class="top-nav">
+            <button class="exit-btn" onclick="goHome()">✕</button>
+            <h2 id="g-header" class="nav-title"></h2>
+            <div class="dummy-space"></div>
+        </div>
+        <div class="card-stage">
+            <div class="flipper" id="card-obj">
+                <div class="front"><div style="font-size:4rem; color:var(--primary);">?</div><p style="color:#666;">اضغط للكشف</p></div>
+                <div class="back"><div id="q-text" class="text-content"></div></div>
+            </div>
+        </div>
+        <button class="btn-gold" style="width:200px; margin-top:30px;" onclick="flip()">اسحب كارت</button>
+    </div>
+
+    <div id="elimination-area" class="screen">
+        <div class="top-nav">
+            <button class="exit-btn" onclick="goHome()">✕</button>
+            <h2 class="nav-title" style="color:#ff9800;">أرض المعركة ⚔️</h2>
+            <div class="dummy-space"></div>
+        </div>
+        <div class="turn-banner" id="elim-turn">الدور على: الزوج 👨 (احذف مكان)</div>
+        <div class="elimination-grid" id="places-grid"></div>
+        <button class="btn-gold" id="reset-elim-btn" style="display:none; margin-top:20px;" onclick="resetElimination()">لعبة جديدة 🔄</button>
+    </div>
+
+    <div id="scratch-area" class="screen" style="justify-content: center;">
+        <div class="top-nav" style="margin-bottom: 30px;">
+            <button class="exit-btn" onclick="goHome()">✕</button>
+            <h2 class="nav-title" style="color:var(--primary);">خربش هديتك 🎁</h2>
+            <div class="dummy-space"></div>
+        </div>
+        <div style="position:relative; width:300px; height:150px; border:2px dashed var(--primary); border-radius:15px; overflow:hidden; background: #fff;">
+            <div id="prize-txt" style="position:absolute; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:white; color:black; font-size:1.4rem; font-weight:bold; padding: 10px; text-align: center;"></div>
+            <canvas id="cvs" style="position:absolute; top:0; left:0;"></canvas>
+        </div>
+        <button class="btn-gold" style="width:200px; margin-top:20px;" onclick="resetScratch()">جايزة تانية</button>
+    </div>
+
+    <div id="roleplay-area" class="screen">
+        <div class="top-nav">
+            <button class="exit-btn" onclick="goHome()">✕</button>
+            <h2 class="nav-title" style="color:var(--accent);">🎭 تمثيل ساخن</h2>
+            <div class="dummy-space"></div>
+        </div>
+        <p style="color:#aaa; font-size:0.9rem; margin-bottom:20px; text-align:center;">سيناريو جاهز لليلة مختلفة</p>
+        <div class="rp-box">
+            <div class="rp-label">الشخصيات:</div><div id="rp-chars" class="rp-val"></div>
+            <div class="rp-label">الملابس المطلوبة:</div><div id="rp-wear" class="rp-val"></div>
+            <div class="rp-label">بداية القصة:</div><div id="rp-plot" class="rp-val" style="border:none; font-size:1rem; line-height:1.5;"></div>
+        </div>
+        <button class="btn-gold" style="width:200px; margin-top:20px; background: linear-gradient(90deg, #e50914, #ff5050);" onclick="genRoleplay()">سيناريو جديد 🎬</button>
+    </div>
+
+    <div id="catch-game-area" class="screen">
+        <div class="top-nav">
+            <button class="exit-btn" onclick="goHome()">✕</button>
+            <h2 class="nav-title" style="color:var(--blue);">رحلة المتعة 🎲</h2>
+            <div class="dummy-space"></div>
+        </div>
+        <div class="board-container" id="board"></div>
+        <div class="catch-controls">
+            <div style="text-align:center;">
+                <div style="font-size:0.7rem; color:#aaa;">الدور على</div>
+                <div id="catch-player" style="font-weight:bold; color:var(--primary);">الزوج 👨</div>
+            </div>
+            <button class="dice-btn" id="catch-dice" onclick="rollCatchDice()" ontouchstart="rollCatchDice()">🎲</button>
+            <div style="text-align:center;">
+                <div style="font-size:0.7rem; color:#aaa;">المكان</div>
+                <div id="catch-pos" style="font-weight:bold;">Start</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="spin-game-area" class="screen">
+        <div class="top-nav">
+            <button class="exit-btn" onclick="goHome()">✕</button>
+            <h2 class="nav-title" style="color:var(--green);">عجلة الأوضاع 🎡</h2>
+            <div class="dummy-space"></div>
+        </div>
+        <div class="spin-header">
+            <span style="color:#aaa; font-weight:bold;">الدور على:</span>
+            <span id="spin-player" style="color:var(--green); font-weight:900;">الزوج 👨</span>
+        </div>
+        <div style="position:relative; margin-top: 20px;">
+            <div class="pointer"></div>
+            <div class="wheel-container">
+                <div class="wheel-bg" id="wheel-bg"></div>
+                <div class="wheel-icons-layer" id="wheel-icons"></div>
+            </div>
+        </div>
+        <button class="btn-gold" style="width:200px; margin-top:40px; background: linear-gradient(90deg, #2ecc71, #27ae60);" onclick="spinWheel()">لف العجلة 💫</button>
+    </div>
+
+    <script>
         // ==========================================
         // 1. محرك الصوت والبيانات (Sound & Data)
         // ==========================================
@@ -395,3 +749,5 @@
         }
 
     </script>
+</body>
+</html>
