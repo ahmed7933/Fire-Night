@@ -332,25 +332,28 @@
         <button class="btn-gold" style="width:200px; margin-top:20px; background: linear-gradient(90deg, #e50914, #ff5050);" onclick="genRoleplay()">سيناريو جديد 🎬</button>
     </div>
 
-    <div id="catch-game-area" class="screen">
+<div id="catch-game-area" class="screen">
         <div class="top-nav">
             <button class="exit-btn" onclick="goHome()">✕</button>
             <h2 class="nav-title" style="color:var(--blue);">رحلة المتعة 🎲</h2>
             <div class="dummy-space"></div>
         </div>
+        
         <div class="board-container" id="board"></div>
+        
         <div class="catch-controls">
             <div style="text-align:center;">
                 <div style="font-size:0.7rem; color:#aaa;">الدور على</div>
                 <div id="catch-player" style="font-weight:bold; color:var(--primary);">الزوج 👨</div>
             </div>
-            <button class="reset-btn" onclick="resetCatchGame()">🔄 ابدأ من جديد</button>
             <button class="dice-btn" id="catch-dice" onclick="rollCatchDice()" ontouchstart="rollCatchDice()">🎲</button>
             <div style="text-align:center;">
                 <div style="font-size:0.7rem; color:#aaa;">المكان</div>
                 <div id="catch-pos" style="font-weight:bold;">Start</div>
             </div>
         </div>
+
+        <button class="reset-btn" onclick="resetCatchGame()">ابدأ من جديد 🔄</button>
     </div>
 
     <div id="spin-game-area" class="screen">
