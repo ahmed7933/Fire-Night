@@ -17,68 +17,27 @@
     <link rel="preload" as="image" href="images/cover9.webp">
 
     <style>
-        :root {
-            --primary: #d4af37; /* ذهبي */
-            --accent: #e50914; /* أحمر */
-            --blue: #00bfff;
-            --purple: #8a2be2;
-            --pink: #ff00cc;
-            --green: #2ecc71;
-            --bg: #050505;
-        }
-
+        :root { --primary: #d4af37; --accent: #e50914; --blue: #00bfff; --purple: #8a2be2; --pink: #ff00cc; --green: #2ecc71; --bg: #050505; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
-
-        body {
-            margin: 0; background-color: var(--bg);
-            background-image: radial-gradient(circle at 50% 50%, #150505 0%, #000 90%);
-            font-family: 'Cairo', sans-serif; color: white;
-            height: 100vh; overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        /* --- الشاشات --- */
-        .screen {
-            display: none; width: 100%; height: 100%;
-            position: relative; z-index: 2;
-            flex-direction: column; align-items: center;
-            padding: 15px; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in;
-        }
+        body { margin: 0; background-color: var(--bg); background-image: radial-gradient(circle at 50% 50%, #150505 0%, #000 90%); font-family: 'Cairo', sans-serif; color: white; height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .screen { display: none; width: 100%; height: 100%; position: relative; z-index: 2; flex-direction: column; align-items: center; padding: 15px; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease-in; }
         .screen.active { display: flex; opacity: 1; }
-
-        /* --- الشريط العلوي --- */
-        .top-nav {
-            width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 15px; padding: 0 5px; height: 40px; flex-shrink: 0;
-        }
+        .top-nav { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; height: 40px; flex-shrink: 0; }
         .nav-title { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin: 0; text-align: center; flex-grow: 1; }
-        .exit-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid #444; color: #aaa; width: 35px; height: 35px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; transition: 0.3s; flex-shrink: 0;
-        }
+        .exit-btn { background: rgba(255,255,255,0.1); border: 1px solid #444; color: #aaa; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
         .dummy-space { width: 35px; }
-
-        /* --- Login & Dashboard --- */
         .login-box { background: rgba(20, 20, 20, 0.9); border: 1px solid rgba(212, 175, 55, 0.3); padding: 30px 20px; border-radius: 25px; text-align: center; width: 100%; max-width: 350px; }
         .input-vip { background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 12px; border-radius: 50px; color: var(--primary); width: 100%; text-align: center; font-size: 1.2rem; margin-bottom: 20px; }
-        .btn-gold {
-            background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); background-size: 200%; color: black; font-weight: bold;
-            padding: 12px; width: 100%; border-radius: 50px; border: none; font-size: 1rem; cursor: pointer; animation: shine 4s infinite linear;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-        }
+        .btn-gold { background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b); background-size: 200%; color: black; font-weight: bold; padding: 12px; width: 100%; border-radius: 50px; border: none; font-size: 1rem; cursor: pointer; animation: shine 4s infinite linear; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); }
         .dashboard-header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; }
         .guide-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; }
-        
         .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 500px; padding-bottom: 20px; }
         .game-item { position: relative; aspect-ratio: 1 / 1; border-radius: 18px; overflow: hidden; cursor: pointer; border: 1px solid #333; }
         .game-item.full-width { grid-column: span 2; aspect-ratio: auto; height: 100px; }
         .game-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: transform 0.3s; }
         .game-item:active img { transform: scale(1.05); }
         .game-label { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to top, black, rgba(0,0,0,0.5)); text-align: center; }
-        .g-title { font-size: 1rem; font-weight: 800; color: white; margin-bottom: 2px;} 
-        .g-sub { font-size: 0.7rem; color: var(--primary); font-weight: bold; }
-
-        /* --- Modals & Instructions --- */
+        .g-title { font-size: 1rem; font-weight: 800; color: white; margin-bottom: 2px;} .g-sub { font-size: 0.7rem; color: var(--primary); font-weight: bold; }
         .modal-glass { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; backdrop-filter: blur(5px); }
         .modal-glass.show { display: flex; animation: fadeIn 0.3s; }
         .guide-content { background: #151515; border: 1px solid var(--primary); border-radius: 20px; width: 100%; max-width: 400px; padding: 25px; text-align: right; max-height: 85vh; overflow-y: auto; }
@@ -88,8 +47,6 @@
         .instr-body { color: #ccc; font-size: 0.95rem; line-height: 1.7; margin-bottom: 25px; }
         .instr-point { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
         .instr-icon { color: var(--accent); font-size: 1.1rem; margin-top: 2px; }
-
-        /* --- Game Styles (Flip Cards) --- */
         .card-stage { perspective: 1000px; width: 100%; max-width: 320px; height: 320px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: 0.6s; }
         .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; border: 2px solid var(--primary); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
@@ -97,12 +54,8 @@
         .back { background: #151515; transform: rotateY(180deg); }
         .flipped { transform: rotateY(180deg); }
         .text-content { font-size: 1.35rem; font-weight: bold; color: #fff; }
-
-        /* --- Roleplay Style --- */
         .rp-box { background: #111; border: 1px solid var(--accent); border-radius: 20px; padding: 25px; width: 100%; max-width: 350px; text-align: right; }
         .rp-val { color: white; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-
-        /* --- Game 3: Elimination (Text Version) --- */
         .elimination-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 350px; margin: 20px auto; }
         .place-card { aspect-ratio: 1 / 1; border-radius: 15px; background: #222; border: 2px solid var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .place-icon { font-size: 2.5rem; margin-bottom: 5px; }
@@ -111,8 +64,6 @@
         .place-card.winner { background: var(--primary); border-color: white; transform: scale(1.1); z-index: 10; box-shadow: 0 0 20px var(--primary); }
         .place-card.winner .place-name { color: black; }
         .turn-banner { background: rgba(255,255,255,0.1); color: var(--primary); padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; border: 1px solid var(--primary); font-size: 0.9rem; }
-
-        /* --- Game 7: Catch Me (Compact 50) --- */
         .board-container { flex-grow: 0; height: auto; overflow-y: hidden; padding: 5px; display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; gap: 3px; width: 100%; background-image: radial-gradient(#222 1px, transparent 1px); background-size: 15px 15px; margin-bottom: 5px; border-radius: 15px; border: 1px solid #333; }
         .row { display: flex; gap: 3px; justify-content: center; width: 100%; }
         .square { width: 38px; height: 38px; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.8rem; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
@@ -131,45 +82,22 @@
         .catch-icon { font-size: 3rem; margin-bottom: 10px; }
         .catch-title { font-size: 1.4rem; color: var(--primary); margin-bottom: 10px; font-weight: 900; }
         .catch-desc { font-size: 1rem; color: #ddd; line-height: 1.6; margin-bottom: 20px; }
-
-        /* زر إعادة ضبط اللعبة */
-        .reset-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #555;
-            color: #888;
-            padding: 8px 20px;
-            border-radius: 50px;
-            margin-top: 15px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.3s;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .reset-btn:active {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(229, 9, 20, 0.1);
-        }
-        
-        /* ==================================================
-           STYLES: WHEEL OF FORTUNE (PRO CONIC VERSION)
-           ================================================== */
         .spin-header { text-align: center; margin-bottom: 20px; background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 15px; border: 1px solid var(--green); display: flex; justify-content: center; gap: 10px; }
         .wheel-container { width: 330px; height: 330px; position: relative; border-radius: 50%; border: 8px solid #222; box-shadow: 0 0 40px rgba(46, 204, 113, 0.3); overflow: hidden; margin: 0 auto; }
-        
-        /* القرص الملون بتدرج مخروطي نظيف */
         .wheel-bg { width: 100%; height: 100%; border-radius: 50%; position: absolute; top:0; left:0; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
-        /* طبقة الأيقونات */
         .wheel-icons-layer { width: 100%; height: 100%; border-radius: 50%; position: absolute; top:0; left:0; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
-        
         .icon-box { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
         .icon-content { position: absolute; left: -20px; bottom: 65px; width: 40px; text-align: center; font-size: 1.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); color: white; }
-        
         .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 45px solid #fff; z-index: 20; filter: drop-shadow(0 4px 4px black); }
         .wheel-result-card { background: #111; border: 3px solid var(--green); padding: 25px; border-radius: 25px; text-align: center; width: 90%; max-width: 380px; box-shadow: 0 0 50px rgba(46, 204, 113, 0.2); }
         #wheel-result-desc { color: #ddd; font-size: 1.1rem; line-height: 1.6; margin: 20px 0; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid #333; }
+        
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid #555; color: #888;
+            padding: 8px 20px; border-radius: 50px; margin-top: 15px; font-size: 0.85rem;
+            cursor: pointer; transition: 0.3s; display: block; margin-left: auto; margin-right: auto;
+        }
+        .reset-btn:active { border-color: var(--accent); color: var(--accent); background: rgba(229, 9, 20, 0.1); }
 
         @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } 100% { transform: rotate(0deg); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -214,6 +142,17 @@
 
     <div id="catch-modal" class="modal-glass">
         <div class="catch-card" id="catch-card-content"></div>
+    </div>
+
+    <div id="confirm-modal" class="modal-glass">
+        <div class="instr-content" style="text-align:center; max-width:300px;">
+            <div class="instr-title" style="color:var(--accent); border:none; margin-bottom:5px;">⚠️ تنبيه</div>
+            <p style="color:#ddd; margin-bottom:25px; font-size:1rem;">هل أنت متأكد؟<br>هيتم مسح التقدم والبدء من نقطة الصفر!</p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="btn-gold" style="background:var(--accent); color:white; width:100px;" onclick="executeReset()">نعم</button>
+                <button class="btn-gold" style="background:#333; color:#ccc; width:100px;" onclick="closeConfirmModal()">لا</button>
+            </div>
+        </div>
     </div>
 
     <div id="login" class="screen active" style="justify-content: center;">
@@ -332,7 +271,7 @@
         <button class="btn-gold" style="width:200px; margin-top:20px; background: linear-gradient(90deg, #e50914, #ff5050);" onclick="genRoleplay()">سيناريو جديد 🎬</button>
     </div>
 
-<div id="catch-game-area" class="screen">
+    <div id="catch-game-area" class="screen">
         <div class="top-nav">
             <button class="exit-btn" onclick="goHome()">✕</button>
             <h2 class="nav-title" style="color:var(--blue);">رحلة المتعة 🎲</h2>
@@ -352,7 +291,7 @@
                 <div id="catch-pos" style="font-weight:bold;">Start</div>
             </div>
         </div>
-        <button class="reset-btn" onclick="openConfirmModal()">ابدأ من جديد 🔄</button>
+        <button class="reset-btn" onclick="openConfirmModal()">🔄 ابدأ من جديد</button>
     </div>
 
     <div id="spin-game-area" class="screen">
@@ -374,70 +313,135 @@
         </div>
         <button class="btn-gold" style="width:200px; margin-top:40px; background: linear-gradient(90deg, #2ecc71, #27ae60);" onclick="spinWheel()">لف العجلة 💫</button>
     </div>
-    
-<div id="confirm-modal" class="modal-glass">
-        <div class="instr-content" style="text-align:center; max-width:300px;">
-            <div class="instr-title" style="color:var(--accent); border:none; margin-bottom:5px;">⚠️ تنبيه</div>
-            <p style="color:#ddd; margin-bottom:25px; font-size:1rem;">هل أنت متأكد؟<br>هيتم مسح التقدم والبدء من نقطة الصفر!</p>
-            <div style="display:flex; gap:10px; justify-content:center;">
-                <button class="btn-gold" style="background:var(--accent); color:white; width:100px;" onclick="executeReset()">نعم</button>
-                <button class="btn-gold" style="background:#333; color:#ccc; width:100px;" onclick="closeConfirmModal()">لا</button>
-            </div>
-        </div>
-    </div>
+
     <script>
         // ==========================================
-        // 1. بيانات التعليمات
+        // 1. ENGINE & DATA
         // ==========================================
-        const gameInstructions = {
-            game1: {
-                title: "1. هزار ونار 😂",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> كسر الملل والضحك.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> اسحبوا 10 كروت وجاوبوا بصراحة.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> ممنوع الزعل هنا، جاوبوا على الأسئلة وضحكوا من قلبكم!</div></div>`,
-                action: () => startGame('stage1')
-            },
-            game2: {
-                title: "2. حب وقرب ❤️",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تجديد الرومانسية.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> اسحبوا كروت المشاعر وجاوبوا من القلب.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> بصوا في عين بعض أثناء الكلام.</div></div>`,
-                action: () => startGame('stage2')
-            },
-            game3: {
-                title: "3. أرض المعركة ⚔️",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تحديد مكان السهرة بالتراضي.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> احذفوا الأماكن بالتبادل لحد ما يتبقى مكان واحد.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> المكان الأخير هو اللي هيحصل فيه الأكشن!</div></div>`,
-                action: () => startEliminationGame()
-            },
-            game4: {
-                title: "4. همس ولمس 🔥",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> التسخين والمداعبة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> نفذوا الكروت الحسية بهدوء.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> ممنوع الاستعجال، خدوا وقتكم في كل لمسة.</div></div>`,
-                action: () => startGame('stage3')
-            },
-            game5: {
-                title: "5. نار ودمار 🔞",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> قمة المتعة والأكشن.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> كروت جريئة جداً للتنفيذ الفوري.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> كل كارت لازم يتنفذ، مفيش انسحاب!</div></div>`,
-                action: () => startGame('stage4')
-            },
-            game6: {
-                title: "6. تمثيل ساخن 🎭",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تقمص أدوار جديدة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> عيشوا السيناريو اللي يطلعلكم بكل تفاصيله.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> انسوا شخصياتكم الحقيقية وعيشوا الدور.</div></div>`,
-                action: () => startRoleplay()
-            },
-            game7: {
-                title: "7. رحلة المتعة 🎲",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> الوصول للنهاية قبل شريكك.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> ارمي النرد ونفذ التحدي اللي في المربع.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> اللعبة 50 خطوة متدرجة (أزرق -> بنفسجي -> وردي -> أحمر).</div></div>`,
-                action: () => startCatchMe()
-            },
-            game8: {
-                title: "8. عجلة الأوضاع 🎡",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> اختيار عشوائي للأوضاع.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> لف العجلة ونفذ الأمر اللي السهم يشاور عليه.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> الحظ هو اللي بيحكم، ولازم التنفيذ!</div></div>`,
-                action: () => startSpinGame()
-            },
-            game9: {
-                title: "9. دلع وولع 🎁",
-                content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> مكافأة الختام.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> خربش الكارت وشوف هديتك.</div></div><div class="instr-point"><span class="instr-icon">📝</span><div><strong>القواعد:</strong> الجائزة دي حقك وممكن تطلبها في أي وقت.</div></div>`,
-                action: () => initScratch()
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+                gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'win') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(500, now); osc.frequency.exponentialRampToValueAtTime(1000, now + 0.5);
+                gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 1);
+                osc.start(now); osc.stop(now + 1);
             }
+        }
+
+        const gameInstructions = {
+            game1: { title: "1. هزار ونار 😂", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> كسر الملل والضحك.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> اسحبوا 10 كروت وجاوبوا بصراحة.</div></div>`, action: () => startGame('stage1') },
+            game2: { title: "2. حب وقرب ❤️", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تجديد الرومانسية.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> اسحبوا كروت المشاعر وجاوبوا من القلب.</div></div>`, action: () => startGame('stage2') },
+            game3: { title: "3. أرض المعركة ⚔️", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تحديد مكان السهرة بالتراضي.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> احذفوا الأماكن بالتبادل لحد ما يتبقى مكان واحد.</div></div>`, action: () => startEliminationGame() },
+            game4: { title: "4. همس ولمس 🔥", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> التسخين والمداعبة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> نفذوا الكروت الحسية بهدوء.</div></div>`, action: () => startGame('stage3') },
+            game5: { title: "5. نار ودمار 🔞", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> قمة المتعة والأكشن.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> كروت جريئة جداً للتنفيذ الفوري.</div></div>`, action: () => startGame('stage4') },
+            game6: { title: "6. تمثيل ساخن 🎭", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> تقمص أدوار جديدة.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> عيشوا السيناريو اللي يطلعلكم بكل تفاصيله.</div></div>`, action: () => startRoleplay() },
+            game7: { title: "7. رحلة المتعة 🎲", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> الوصول للنهاية قبل شريكك.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> ارمي النرد ونفذ التحدي اللي في المربع.</div></div>`, action: () => startCatchMe() },
+            game8: { title: "8. عجلة الأوضاع 🎡", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> اختيار عشوائي للأوضاع.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> لف العجلة ونفذ الأمر اللي السهم يشاور عليه.</div></div>`, action: () => startSpinGame() },
+            game9: { title: "9. دلع وولع 🎁", content: `<div class="instr-point"><span class="instr-icon">🎯</span><div><strong>الهدف:</strong> مكافأة الختام.</div></div><div class="instr-point"><span class="instr-icon">🎲</span><div><strong>الطريقة:</strong> خربش الكارت وشوف هديتك.</div></div>`, action: () => initScratch() }
         };
 
+        const db = {
+            stage1: [{ t: "m", q: "قلد صوت حماتك." }, { t: "f", q: "ارقصي بلدي." }],
+            stage2: [{ t: "b", q: "حضن دقيقة صمت." }],
+            stage3: [{ t: "m", q: "بوس الرقبة." }],
+            stage4: [{ t: "f", q: "انتي الملكة." }],
+            prizes: ["مساج كامل", "فطار في السرير"],
+            roleplays: [{ chars: "الدكتور والمريضة", wear: "بالطو", plot: "كشف شامل." }]
+        };
+
+        const catchDB = [
+            { type: "start", text: "البداية", icon: "🏁", desc: "نقطة الانطلاق" },
+            { type: "blue", text: "بوسة", desc: "بوسة رقيقة", icon: "💋" },
+            // ... انسخ الـ 50 مربع هنا ...
+            { type: "finish", text: "النهاية", desc: "مبروك!", icon: "🎉" }
+        ];
+
+        const placesData = [
+            { id: 1, name: "السرير", icon: "🛏️" }, { id: 2, name: "الكنبة", icon: "🛋️" },
+            { id: 3, name: "المطبخ", icon: "🍳" }, { id: 4, name: "تحت الدش", icon: "🚿" },
+            { id: 5, name: "السجادة", icon: "🧶" }, { id: 6, name: "الكرسي", icon: "🪑" },
+            { id: 7, name: "المرايا", icon: "🪞" }, { id: 8, name: "السفرة", icon: "🍽️" },
+            { id: 9, name: "الغسالة", icon: "🧺" }
+        ];
+
+        const wheelSegments = [
+            { text: "بوسة", icon: "💋", color: "#e74c3c", desc: "بوسة فرنسية." },
+            { text: "مساج", icon: "💆", color: "#e67e22", desc: "مساج للرقبة." },
+            { text: "همس", icon: "🗣️", color: "#f1c40f", desc: "همس في الأذن." },
+            { text: "لعق", icon: "👅", color: "#2ecc71", desc: "مداعبة باللسان." },
+            { text: "Oral", icon: "🍭", color: "#1abc9c", desc: "جنس فموي." },
+            { text: "Doggy", icon: "🐕", color: "#3498db", desc: "وضعية الدوجي." },
+            { text: "تحكم", icon: "👑", color: "#9b59b6", desc: "أنت الملك." },
+            { text: "69", icon: "♋", color: "#8e44ad", desc: "وضعية 69." },
+            { text: "تعري", icon: "👙", color: "#ff4081", desc: "رقصة تعري." },
+            { text: "عضة", icon: "🧛", color: "#f44336", desc: "عضة خفيفة." },
+            { text: "يدوية", icon: "👋", color: "#ff9800", desc: "مداعبة يدوية." },
+            { text: "واقف", icon: "🧍", color: "#ffeb3b", desc: "علاقة سريعة." },
+            { text: "فارسة", icon: "🤠", color: "#cddc39", desc: "الزوجة تتحكم." },
+            { text: "مغمض", icon: "🙈", color: "#009688", desc: "غمض عينك." },
+            { text: "أداة", icon: "🪶", color: "#03a9f4", desc: "استخدم ريشة." },
+            { text: "حرية", icon: "😈", color: "#607d8b", desc: "افعل ما يحلو لك." }
+        ];
+
+        // ==========================================
+        // 2. CORE LOGIC
+        // ==========================================
+        let currentQ = [];
+        let activeStage = "";
+
+        // تحميل البيانات
+        window.onload = function() {
+            if(localStorage.getItem('isLoggedIn') === 'true') {
+                show('dashboard', false);
+            }
+            // استرجاع تقدم Catch Me
+            const savedP1 = localStorage.getItem('hn_catch_p1');
+            const savedP2 = localStorage.getItem('hn_catch_p2');
+            const savedTurn = localStorage.getItem('hn_catch_turn');
+            
+            if(savedP1) catchPlayers[0].pos = parseInt(savedP1);
+            if(savedP2) catchPlayers[1].pos = parseInt(savedP2);
+            if(savedTurn) cTurn = parseInt(savedTurn);
+        };
+
+        function show(id, withSound = true) {
+            if(withSound) try{ playSound('click'); }catch(e){}
+            document.querySelectorAll('.screen').forEach(s => { 
+                if(s.id !== id) {
+                    s.classList.remove('active'); 
+                    setTimeout(()=> { if(!s.classList.contains('active')) s.style.display='none'; }, 300); 
+                }
+            });
+            const el = document.getElementById(id); el.style.display = 'flex'; setTimeout(()=>el.classList.add('active'), 10);
+        }
+
+        function login() {
+            const val = document.getElementById('pass').value;
+            if(btoa(val) === "MTIzNA==" || btoa(val) === "SE9U") { 
+                localStorage.setItem('isLoggedIn', 'true');
+                show('dashboard');
+            } else {
+                document.getElementById('error').style.display='block';
+            }
+        }
+
+        function goHome() { show('dashboard'); }
+        function openGuide() { try{playSound('click');}catch(e){} document.getElementById('modal-guide').classList.add('show'); }
+        function closeGuide() { try{playSound('click');}catch(e){} document.getElementById('modal-guide').classList.remove('show'); }
+
         function openInstructions(gameId) {
+            try{playSound('click');}catch(e){}
             const data = gameInstructions[gameId];
             if(!data) return;
             document.getElementById('instr-title').innerText = data.title;
@@ -450,90 +454,6 @@
             document.getElementById('instructions-screen').classList.add('show');
         }
 
-        // ==========================================
-        // 2. DATA (يرجى وضع الداتا الكاملة هنا)
-        // ==========================================
-        
-        // ⚠ تنبيه: للحصول على أفضل تجربة، يرجى نسخ المحتوى النصي الكامل (500+ عنصر) 
-        // الذي أرسلته لك في الردود السابقة ووضعه هنا داخل متغير db و catchDB.
-        // هذا نموذج مختصر للتشغيل.
-        
-        const db = {
-            stage1: [{ t: "m", q: "قلد صوت حماتك." }, { t: "f", q: "ارقصي بلدي." }, { t: "b", q: "مسابقة نظرات." }], 
-            stage2: [{ t: "b", q: "حضن دقيقة صمت." }, { t: "m", q: "أوصفها بكلمة." }, { t: "f", q: "سر مخبياه." }],
-            stage3: [{ t: "m", q: "بوس الرقبة." }, { t: "f", q: "مساج للظهر." }, { t: "b", q: "تلامس بدون بوس." }],
-            stage4: [{ t: "f", q: "انتي الملكة." }, { t: "m", q: "وضع الدوجي." }, { t: "b", q: "علاقة في الصالة." }],
-            prizes: ["مساج كامل", "فطار في السرير", "عزومة كشري", "إعفاء من المواعين"],
-            roleplays: [
-                { chars: "الدكتور والمريضة", wear: "بالطو", plot: "كشف شامل يتحول لمداعبة." },
-                { chars: "المدرس والطالبة", wear: "نضارة", plot: "عقاب مدرسي مثير." }
-            ]
-        };
-
-        const catchDB = [
-            { type: "start", text: "البداية", icon: "🏁", desc: "نقطة الانطلاق" },
-            // ... (انسخ الـ 50 مربع هنا للحصول على اللعبة الكاملة) ...
-            { type: "blue", text: "بوسة", desc: "بوسة رقيقة", icon: "💋" },
-            { type: "blue", text: "همسة", desc: "كلمة بحبك", icon: "👂" },
-            { type: "finish", text: "النهاية", desc: "مبروك! علاقة كاملة 🔥", icon: "🎉" }
-        ];
-
-        const placesData = [
-            { id: 1, name: "السرير", icon: "🛏️" }, { id: 2, name: "الكنبة", icon: "🛋️" },
-            { id: 3, name: "المطبخ", icon: "🍳" }, { id: 4, name: "تحت الدش", icon: "🚿" },
-            { id: 5, name: "السجادة", icon: "🧶" }, { id: 6, name: "الكرسي", icon: "🪑" },
-            { id: 7, name: "المرايا", icon: "🪞" }, { id: 8, name: "السفرة", icon: "🍽️" },
-            { id: 9, name: "الغسالة", icon: "🧺" }
-        ];
-
-        const wheelSegments = [
-            { text: "بوسة", icon: "💋", color: "#e74c3c", desc: "بوسة فرنسية عميقة." },
-            { text: "مساج", icon: "💆", color: "#e67e22", desc: "مساج للرقبة 3 دقايق." },
-            { text: "همس", icon: "🗣️", color: "#f1c40f", desc: "همس في الأذن بأكثر خيال نفسك فيه." },
-            { text: "لعق", icon: "👅", color: "#2ecc71", desc: "مداعبة باللسان لمنطقة حساسة." },
-            { text: "Oral", icon: "🍭", color: "#1abc9c", desc: "جنس فموي حتى تطلب التوقف." },
-            { text: "Doggy", icon: "🐕", color: "#3498db", desc: "علاقة في وضعية الدوجي." },
-            { text: "تحكم", icon: "👑", color: "#9b59b6", desc: "أنت الملك لمدة 5 دقايق." },
-            { text: "69", icon: "♋", color: "#8e44ad", desc: "وضعية 69 للمتعة المتبادلة." },
-            { text: "تعري", icon: "👙", color: "#ff4081", desc: "رقصة تعري (Striptease) بطيئة." },
-            { text: "عضة", icon: "🧛", color: "#f44336", desc: "عضة خفيفة (Love Bite) في الرقبة." },
-            { text: "يدوية", icon: "👋", color: "#ff9800", desc: "مداعبة يدوية للوصول للنشوة." },
-            { text: "واقف", icon: "🧍", color: "#ffeb3b", desc: "علاقة سريعة وقوفاً." },
-            { text: "فارسة", icon: "🤠", color: "#cddc39", desc: "الزوجة في الأعلى وتتحكم." },
-            { text: "مغمض", icon: "🙈", color: "#009688", desc: "غمض عينك واستقبل لمسات مفاجئة." },
-            { text: "أداة", icon: "🪶", color: "#03a9f4", desc: "استخدم ريشة أو ثلج للمداعبة." },
-            { text: "حرية", icon: "😈", color: "#607d8b", desc: "افعل بشريكك ما يحلو لك." }
-        ];
-
-        // ==========================================
-        // 3. CORE LOGIC
-        // ==========================================
-        let currentQ = [];
-        let activeStage = "";
-
-        function show(id) {
-            document.querySelectorAll('.screen').forEach(s => { 
-                if(s.id !== id) {
-                    s.classList.remove('active'); 
-                    setTimeout(()=> { if(!s.classList.contains('active')) s.style.display='none'; }, 300); 
-                }
-            });
-            const el = document.getElementById(id); el.style.display = 'flex'; setTimeout(()=>el.classList.add('active'), 10);
-        }
-
-        function login() {
-            const val = document.getElementById('pass').value;
-            if(val==="1234" || val==="HOT") show('dashboard');
-            else document.getElementById('error').style.display='block';
-        }
-
-        function goHome() { show('dashboard'); }
-        function openGuide() { document.getElementById('modal-guide').classList.add('show'); }
-        function closeGuide() { document.getElementById('modal-guide').classList.remove('show'); }
-
-        // ==========================================
-        // 4. GAME FUNCTIONS
-        // ==========================================
         function startGame(stg) {
             activeStage = stg;
             currentQ = [...db[stg]].sort(() => Math.random() - 0.5); 
@@ -548,6 +468,7 @@
         }
 
         function flip() {
+            try{playSound('click');}catch(e){}
             const c = document.getElementById('card-obj');
             if(c.classList.contains('flipped')) { c.classList.remove('flipped'); setTimeout(updTxt, 300); }
             else { updTxt(); c.classList.add('flipped'); }
@@ -567,6 +488,7 @@
 
         function startRoleplay() { show('roleplay-area'); genRoleplay(); }
         function genRoleplay() {
+            try{playSound('click');}catch(e){}
             const rp = db.roleplays[Math.floor(Math.random() * db.roleplays.length)];
             document.getElementById('rp-chars').innerText = rp.chars;
             document.getElementById('rp-wear').innerText = rp.wear;
@@ -599,8 +521,7 @@
         }
 
         // --- Elimination ---
-        let activePlacesCount = 9;
-        let elimTurn = 0; 
+        let activePlacesCount = 9; let elimTurn = 0; 
         function startEliminationGame() { show('elimination-area'); resetElimination(); }
         function resetElimination() {
             const grid = document.getElementById('places-grid'); grid.innerHTML = "";
@@ -618,6 +539,7 @@
             if (activePlacesCount <= 1) return;
             const card = document.getElementById(`p-${id}`);
             if (card.classList.contains('eliminated')) return;
+            try{playSound('click');}catch(e){}
             card.classList.add('eliminated'); activePlacesCount--;
             elimTurn = (elimTurn === 0) ? 1 : 0; updateElimTurnUI();
             if (activePlacesCount === 1) declareWinnerPlace();
@@ -632,6 +554,7 @@
             allCards.forEach(card => { if (!card.classList.contains('eliminated')) { card.classList.add('winner'); winnerText = card.querySelector('.place-name').innerText; } });
             const banner = document.getElementById('elim-turn'); banner.innerText = `🎉 المكان المختار: ${winnerText}`; banner.style.color = "#d4af37"; banner.style.borderColor = "#d4af37";
             document.getElementById('reset-elim-btn').style.display = 'block';
+            try{playSound('win');}catch(e){}
             if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
         }
 
@@ -642,7 +565,6 @@
         function createCatchBoard() {
             const board = document.getElementById('board'); board.innerHTML = "";
             let row = document.createElement('div'); row.className = 'row';
-            // 50 Squares Loop
             for (let i = 50; i >= 0; i--) {
                 const sqData = catchDB[i] || catchDB[catchDB.length-1];
                 let z = ''; if(i===0||i===50) z='finish-zone'; else if(i<=12) z='blue-zone'; else if(i<=25) z='purple-zone'; else if(i<=37) z='pink-zone'; else z='red-zone';
@@ -660,6 +582,7 @@
             });
         }
         function rollCatchDice() {
+            try{playSound('click');}catch(e){}
             const btn = document.getElementById('catch-dice'); if(btn.classList.contains('rolling')) return;
             btn.innerText = "🎲"; btn.classList.add('rolling');
             setTimeout(() => {
@@ -670,11 +593,20 @@
         function moveCatchPlayer(steps) {
             const p = catchPlayers[cTurn]; let moved = 0;
             const intv = setInterval(() => {
-                if(p.pos < 50) { p.pos++; updateTokens(); moved++; }
-                if(moved >= steps || p.pos >= 50) { clearInterval(intv); setTimeout(()=>showCatchChallenge(p.pos), 500); }
+                if(p.pos < 50) { 
+                    p.pos++; updateTokens(); moved++; 
+                    // Auto Save
+                    localStorage.setItem('hn_catch_p1', catchPlayers[0].pos);
+                    localStorage.setItem('hn_catch_p2', catchPlayers[1].pos);
+                }
+                if(moved >= steps || p.pos >= 50) { 
+                    clearInterval(intv); 
+                    setTimeout(()=>showCatchChallenge(p.pos), 500); 
+                }
             }, 300);
         }
         function showCatchChallenge(pos) {
+            try{playSound('win');}catch(e){}
             if(pos === 0) { switchCTurn(); return; }
             const data = catchDB[pos] || catchDB[catchDB.length-1];
             const modal = document.getElementById('catch-modal'); const content = document.getElementById('catch-card-content');
@@ -684,12 +616,23 @@
             modal.style.display = 'flex';
         }
         function closeCatchModal() {
+            try{playSound('click');}catch(e){}
             document.getElementById('catch-modal').style.display = 'none';
-            if(catchPlayers[cTurn].pos >= 50) { alert(`مبروك! ${catchPlayers[cTurn].name} كسب الليلة! 🎉`); catchPlayers[0].pos=0; catchPlayers[1].pos=0; updateTokens(); cTurn=0; } else { switchCTurn(); }
+            if(catchPlayers[cTurn].pos >= 50) { 
+                alert(`مبروك! ${catchPlayers[cTurn].name} كسب الليلة! 🎉`); 
+                catchPlayers[0].pos=0; catchPlayers[1].pos=0; 
+                localStorage.removeItem('hn_catch_p1'); localStorage.removeItem('hn_catch_p2');
+                localStorage.removeItem('hn_catch_turn');
+                updateTokens(); cTurn=0; 
+            } else { switchCTurn(); }
         }
-        function switchCTurn() { cTurn = (cTurn === 0) ? 1 : 0; const p = catchPlayers[cTurn]; document.getElementById('catch-player').innerText = `${p.name} ${p.icon}`; document.getElementById('catch-pos').innerText = p.pos===0?"Start":p.pos; }
+        function switchCTurn() { 
+            cTurn = (cTurn === 0) ? 1 : 0; 
+            localStorage.setItem('hn_catch_turn', cTurn);
+            const p = catchPlayers[cTurn]; document.getElementById('catch-player').innerText = `${p.name} ${p.icon}`; document.getElementById('catch-pos').innerText = p.pos===0?"Start":p.pos; 
+        }
 
-        // --- Spin Wheel (Conic Clean) ---
+        // --- Spin Wheel ---
         let wheelCreated = false; let currentRotation = 0; let spinTurn = 0; 
         const spinPlayers = [ { name: "الزوج", icon: "👨" }, { name: "الزوجة", icon: "👩" } ];
         function startSpinGame() { show('spin-game-area'); if (!wheelCreated) { createWheelClean(); wheelCreated = true; } updateSpinUI(); }
@@ -710,6 +653,7 @@
         function spinWheel() {
             const bg = document.getElementById('wheel-bg'); const icons = document.getElementById('wheel-icons');
             const spinBtn = document.querySelector('#spin-game-area .btn-gold'); if(spinBtn.disabled) return;
+            try{playSound('click');}catch(e){}
             spinBtn.disabled = true; const randomDeg = Math.floor(1800 + Math.random() * 1800); currentRotation += randomDeg;
             bg.style.transform = `rotate(${currentRotation}deg)`; icons.style.transform = `rotate(${currentRotation}deg)`;
             setTimeout(() => {
@@ -719,140 +663,58 @@
                 showWheelResult(wheelSegments[winningIndex]); spinBtn.disabled = false;
             }, 4000); 
         }
-        function showWheelResult(res) { const modal = document.getElementById('wheel-modal'); document.getElementById('wheel-result-icon').innerText = res.icon; document.getElementById('wheel-result-title').innerText = res.text; document.getElementById('wheel-result-desc').innerText = res.desc; modal.style.display = 'flex'; }
-        function closeWheelModal() { document.getElementById('wheel-modal').style.display = 'none'; spinTurn = (spinTurn === 0) ? 1 : 0; updateSpinUI(); }
-// ==========================================
-        // 7. نظام حفظ التقدم (AUTO-SAVE SYSTEM)
-        // ==========================================
-        
-        // تحميل البيانات عند فتح الموقع
-        window.onload = function() {
-            // 1. التحقق من تسجيل الدخول
-            if(localStorage.getItem('isLoggedIn') === 'true') {
-                show('dashboard');
-            }
-
-            // 2. استرجاع تقدم لعبة Catch Me
-            const savedP1 = localStorage.getItem('catch_p1');
-            const savedP2 = localStorage.getItem('catch_p2');
-            const savedTurn = localStorage.getItem('catch_turn');
-            
-            if(savedP1) catchPlayers[0].pos = parseInt(savedP1);
-            if(savedP2) catchPlayers[1].pos = parseInt(savedP2);
-            if(savedTurn) cTurn = parseInt(savedTurn);
-            
-            // تحديث الواجهة إذا كان هناك تقدم محفوظ
-            if(savedP1 || savedP2) {
-                 // لا نظهر الشاشة، فقط نحدث البيانات في الخلفية
-                 // عند فتح اللعبة سيتم بناء البورد بالأماكن الصحيحة
-            }
-        };
-
-        // تعديل دالة الدخول لحفظ الحالة
-        const originalLogin = login;
-        login = function() {
-            const val = document.getElementById('pass').value;
-            // تشفير بسيط للكود عشان ميبقاش مكشوف في الملف (Base64)
-            // 1234 = MTIzNA==
-            // HOT = SE9U
-            if(btoa(val) === "MTIzNA==" || btoa(val) === "SE9U") { 
-                localStorage.setItem('isLoggedIn', 'true');
-                show('dashboard');
-            } else {
-                document.getElementById('error').style.display='block';
-            }
-        };
-
-        // تعديل دالة حركة اللاعبين لحفظ المكان خطوة بخطوة
-        const originalMoveCatch = moveCatchPlayer;
-        moveCatchPlayer = function(steps) {
-            const p = catchPlayers[cTurn]; 
-            let moved = 0;
-            const intv = setInterval(() => {
-                if(p.pos < 50) { 
-                    p.pos++; 
-                    updateTokens(); 
-                    moved++; 
-                }
-                if(moved >= steps || p.pos >= 50) {
-                    clearInterval(intv);
-                    // --- حفظ التقدم الجديد ---
-                    localStorage.setItem('catch_p1', catchPlayers[0].pos);
-                    localStorage.setItem('catch_p2', catchPlayers[1].pos);
-                    localStorage.setItem('catch_turn', cTurn); // سنقوم بتبديل الدور بعد إغلاق الكارت
-                    
-                    setTimeout(()=>showCatchChallenge(p.pos), 500);
-                }
-            }, 300);
-        };
-        
-        // تعديل دالة إغلاق الكارت لحفظ الدور الجديد
-        const originalCloseCatch = closeCatchModal;
-        closeCatchModal = function() {
-            document.getElementById('catch-modal').style.display = 'none';
-            if(catchPlayers[cTurn].pos >= 50) {
-                alert(`مبروك! ${catchPlayers[cTurn].name} كسب الليلة! 🎉`);
-                // تصفير اللعبة عند الفوز
-                catchPlayers[0].pos=0; catchPlayers[1].pos=0; 
-                localStorage.removeItem('catch_p1');
-                localStorage.removeItem('catch_p2');
-                localStorage.removeItem('catch_turn');
-                updateTokens(); cTurn=0;
-            } else { 
-                switchCTurn();
-                // حفظ الدور الجديد
-                localStorage.setItem('catch_turn', cTurn);
-            }
-        };
-        
-        // زر "مسح التقدم" (إضافي في الإعدادات لو حبيت)
-        function resetAllProgress() {
-            localStorage.clear();
-            location.reload();
+        function showWheelResult(res) { 
+            try{playSound('win');}catch(e){}
+            const modal = document.getElementById('wheel-modal'); document.getElementById('wheel-result-icon').innerText = res.icon; document.getElementById('wheel-result-title').innerText = res.text; document.getElementById('wheel-result-desc').innerText = res.desc; modal.style.display = 'flex'; 
+        }
+        function closeWheelModal() { 
+            try{playSound('click');}catch(e){}
+            document.getElementById('wheel-modal').style.display = 'none'; spinTurn = (spinTurn === 0) ? 1 : 0; updateSpinUI(); 
         }
 
         // ==========================================
-        // RESET GAME LOGIC (النظام الجديد)
+        // RESET GAME (Custom Modal Logic)
         // ==========================================
-
         function openConfirmModal() {
-            playSound('click');
-            document.getElementById('confirm-modal').style.display = 'flex';
-            setTimeout(() => document.getElementById('confirm-modal').classList.add('show'), 10);
+            try{playSound('click');}catch(e){}
+            const modal = document.getElementById('confirm-modal');
+            if(modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
         }
 
         function closeConfirmModal() {
-            playSound('click');
-            document.getElementById('confirm-modal').classList.remove('show');
-            setTimeout(() => document.getElementById('confirm-modal').style.display = 'none', 300);
+            try{playSound('click');}catch(e){}
+            const modal = document.getElementById('confirm-modal');
+            if(modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
         }
 
         function executeReset() {
-            playSound('click');
+            try{playSound('click');}catch(e){}
             
-            // 1. تصفير المتغيرات في الذاكرة الحالية
+            // 1. Reset Memory
             catchPlayers[0].pos = 0;
             catchPlayers[1].pos = 0;
             cTurn = 0; 
 
-            // 2. مسح الذاكرة من المتصفح (LocalStorage)
+            // 2. Clear Storage (Using Correct Keys: hn_...)
             localStorage.removeItem('hn_catch_p1');
             localStorage.removeItem('hn_catch_p2');
             localStorage.removeItem('hn_catch_turn');
 
-            // 3. تحديث الواجهة فوراً (إرجاع البيادق للصفر)
-            updateTokens(); 
-            
-            // 4. تحديث النصوص (الدور والمكان)
+            // 3. Update UI
+            updateTokens();
             document.getElementById('catch-player').innerText = `${catchPlayers[0].name} ${catchPlayers[0].icon}`;
             document.getElementById('catch-pos').innerText = "Start";
 
-            // 5. إغلاق النافذة
             closeConfirmModal();
-            
-            // هزاز للتأكيد
             if(navigator.vibrate) navigator.vibrate(200);
         }
+
     </script>
 </body>
 </html>
