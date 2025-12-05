@@ -56,12 +56,62 @@
         .text-content { font-size: 1.35rem; font-weight: bold; color: #fff; }
         .rp-box { background: #111; border: 1px solid var(--accent); border-radius: 20px; padding: 25px; width: 100%; max-width: 350px; text-align: right; }
         .rp-val { color: white; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .elimination-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 350px; margin: 20px auto; }
-        .place-card { aspect-ratio: 1 / 1; border-radius: 15px; background: #222; border: 2px solid var(--primary); display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .place-icon { font-size: 2.5rem; margin-bottom: 5px; }
-        .place-name { font-size: 0.9rem; font-weight: bold; color: white; }
-        .place-card.eliminated { background: #111; border-color: #333; opacity: 0.3; transform: scale(0.9); filter: grayscale(100%); }
-        .place-card.winner { background: var(--primary); border-color: white; transform: scale(1.1); z-index: 10; box-shadow: 0 0 20px var(--primary); }
+/* --- Game 3: Elimination (تعديل الحجم الصغير) --- */
+        .elimination-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); /* 3 مربعات في الصف إجباري */
+            gap: 8px; /* تقليل المسافة بين المربعات */
+            width: 100%; 
+            max-width: 340px; /* تحجيم العرض الكلي */
+            margin: 15px auto; 
+            padding: 0 5px;
+        }
+        
+        .place-card { 
+            aspect-ratio: 1 / 1; /* الحفاظ على شكل المربع */
+            border-radius: 12px; 
+            background: #222; 
+            border: 1px solid var(--primary); /* تصغير سمك البرواز */
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
+            padding: 5px; /* تقليل الحواف الداخلية */
+        }
+        
+        .place-icon { 
+            font-size: 1.8rem; /* تصغير حجم الأيقونة */
+            margin-bottom: 3px; 
+        }
+        
+        .place-name { 
+            font-size: 0.75rem; /* تصغير حجم الخط ليناسب المربع الصغير */
+            font-weight: bold; 
+            color: white; 
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* تأثير الحذف */
+        .place-card.eliminated { 
+            background: #111; 
+            border-color: #333; 
+            opacity: 0.3; 
+            transform: scale(0.95); 
+            filter: grayscale(100%); 
+        }
+        
+        /* تأثير الفائز */
+        .place-card.winner { 
+            background: var(--primary); 
+            border-color: white; 
+            transform: scale(1.05); 
+            z-index: 10; 
+            box-shadow: 0 0 15px var(--primary); 
+        }
         .place-card.winner .place-name { color: black; }
         .turn-banner { background: rgba(255,255,255,0.1); color: var(--primary); padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 10px; border: 1px solid var(--primary); font-size: 0.9rem; }
         .board-container { flex-grow: 0; height: auto; overflow-y: hidden; padding: 5px; display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; gap: 3px; width: 100%; background-image: radial-gradient(#222 1px, transparent 1px); background-size: 15px 15px; margin-bottom: 5px; border-radius: 15px; border: 1px solid #333; }
@@ -2130,19 +2180,17 @@ prizes: [
             { id: 14, name: "غرفة الضيوف", icon: "🛌" },
             { id: 15, name: "المكتب", icon: "💻" },
             { id: 16, name: "على الحيطة", icon: "🧱" },
-            { id: 17, name: "الدريسنج (دولاب)", icon: "👗" },
+            { id: 17, name: "الدريسنج", icon: "👗" },
             { id: 18, name: "طرف السرير", icon: "🛏️" },
             { id: 19, name: "تحت البطانية", icon: "🛌" },
             { id: 20, name: "حوض الحمام", icon: "🚰" },
             { id: 21, name: "مدخل الشقة", icon: "🔑" },
-            { id: 22, name: "كرسي الليزي بوي", icon: "🛋️" },
+            { id: 22, name: "التسريحة", icon: "💄" },
             { id: 23, name: "قدام التلاجة", icon: "❄️" },
             { id: 24, name: "قدام الشباك", icon: "🪟" },
             { id: 25, name: "أرضية المطبخ", icon: "🍳" },
             { id: 26, name: "أرضية الحمام", icon: "🧼" },
-            { id: 27, name: "الصالون", icon: "🖼️" },
-            { id: 28, name: "الليفينج", icon: "📺" },
-            { id: 29, name: "التسريحة", icon: "💄" }
+            { id: 27, name: "الصالون", icon: "🖼️" }
         ];
 
         const wheelSegments = [
