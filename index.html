@@ -15,7 +15,9 @@
     <link rel="preload" as="image" href="images/cover7.webp">
     <link rel="preload" as="image" href="images/cover8.webp">
     <link rel="preload" as="image" href="images/cover9.webp">
-
+    
+<script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+    
     <style>
         :root { --primary: #d4af37; --accent: #e50914; --blue: #00bfff; --purple: #8a2be2; --pink: #ff00cc; --green: #2ecc71; --bg: #050505; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
@@ -290,15 +292,98 @@
         .hero-banner-container:hover .hero-img {
             transform: scale(1.1);
         }
+
+        /* SaaS Landing Page Styles */
+.landing-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; height: 100%; overflow-y: auto; padding: 20px;
+    background: linear-gradient(to bottom, #000, #111);
+}
+.pricing-card {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--primary);
+    padding: 20px; border-radius: 15px; margin: 10px 0; width: 100%; max-width: 350px;
+    text-align: center; transition: 0.3s;
+}
+.pricing-card.best { background: rgba(212, 175, 55, 0.1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); transform: scale(1.05); border: 2px solid var(--primary);}
+.price-tag { font-size: 2rem; color: white; font-weight: bold; margin: 10px 0; }
+.features-list { list-style: none; padding: 0; color: #ccc; font-size: 0.9rem; margin-bottom: 20px;}
+.features-list li { margin: 5px 0; }
+.features-list li::before { content: "✓"; color: var(--primary); margin-left: 5px; }
+.input-field { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; margin-bottom: 10px; font-family: 'Cairo';}
+
+/* --- تصميم صفحة الهبوط والأسعار --- */
+.landing-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; height: 100%; overflow-y: auto; padding: 20px 10px;
+    background: linear-gradient(to bottom, #000, #111);
+    z-index: 50; /* عشان تظهر فوق الخلفية */
+}
+.pricing-card {
+    background: rgba(255,255,255,0.05); border: 1px solid #333;
+    padding: 20px; border-radius: 20px; margin: 10px 0; width: 100%; max-width: 350px;
+    text-align: center; transition: 0.3s; position: relative;
+}
+.pricing-card.best { 
+    background: rgba(212, 175, 55, 0.08); 
+    border: 2px solid var(--primary);
+    transform: scale(1.02);
+}
+.price-tag { font-size: 2.2rem; color: white; font-weight: 800; margin: 15px 0; font-family: 'Cairo'; }
+.features-list { list-style: none; padding: 0; color: #ccc; font-size: 0.9rem; margin-bottom: 25px; text-align: right; padding-right: 20px;}
+.features-list li { margin: 8px 0; display: flex; align-items: center; }
+.features-list li::before { content: "✓"; color: var(--primary); margin-left: 8px; font-weight: bold; }
+.input-field { 
+    width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #444; 
+    background: #222; color: white; margin-bottom: 15px; font-family: 'Cairo'; text-align: center;
+}
+        
     </style>
 </head>
 <body>
-<div id="welcome-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#050505; z-index:9999; display:flex; justify-content:center; align-items:center; flex-direction:column; transition: opacity 0.5s;">
-        <div class="logo" style="margin-bottom:20px; font-size:3rem;">🔥</div>
-        <h1 style="color:var(--primary); margin-bottom:10px; font-size: 2rem;">HOT NIGHT</h1>
-        <p style="color:#888; margin-bottom:30px; font-family:'Cairo';">اضغط للبدء وتفعيل الصوت 🔊</p>
-        <button class="btn-gold" style="width:200px;" onclick="initApp()">ابدأ السهرة 🚀</button>
+    <div id="landing" class="screen landing-screen active">
+    <div class="logo-pro" style="font-size: 3.5rem; margin-bottom: 0;">HOT NIGHT</div>
+    <p style="color:#888; text-align:center; margin-bottom:30px; font-size: 0.9rem;">
+        الإصدار الذهبي للمتزوجين فقط +18 <br> 
+        <span style="color:var(--primary)">جدد حياتك الزوجية بلمسة تكنولوجيا</span>
+    </p>
+    
+    <div class="pricing-card">
+        <h3 style="color:white; margin:0;">تجربة (شهر واحد)</h3>
+        <div class="price-tag">149 EGP</div>
+        <button class="btn-gold" style="background: #333; color: white; border:1px solid #555;" onclick="openRegister(1)">اشتراك</button>
     </div>
+    
+    <div class="pricing-card best">
+        <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--primary); color:black; font-weight:bold; font-size:0.8rem; border-radius:20px; padding:4px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">الأكثر طلباً 🔥</div>
+        <h3 style="color:var(--primary); margin-top:10px;">باقة التوفير (3 شهور)</h3>
+        <ul class="features-list">
+            <li>فتح جميع الألعاب (9 ألعاب)</li>
+            <li>تفعيل لجهازين (أنت وشريكك)</li>
+            <li>تحديثات مجانية للألعاب</li>
+        </ul>
+        <div class="price-tag">269 EGP</div>
+        <button class="btn-gold" onclick="openRegister(3)">اشتراك الآن</button>
+    </div>
+
+    <div style="margin-top:40px; text-align: center;">
+        <p style="color:#666; font-size: 0.8rem; margin-bottom: 5px;">مشترك بالفعل؟</p>
+        <button style="background:none; border:none; color:var(--primary); text-decoration: underline; cursor:pointer; font-size: 1rem;" onclick="show('login')">دخول بالكود</button>
+    </div>
+</div>
+
+<div id="register-modal" class="modal-glass">
+    <div class="login-card-pro" style="animation: none; padding: 30px;">
+        <h2 style="color:var(--primary); margin-top:0;">بيانات الاشتراك</h2>
+        <p style="color:#aaa; font-size:0.8rem; margin-bottom:20px;">سيتم التواصل معك واتساب لتفعيل الكود</p>
+        
+        <input type="text" id="reg-name" class="input-field" placeholder="الاسم أو اللقب">
+        <input type="tel" id="reg-phone" class="input-field" placeholder="رقم الواتساب (01xxxxxxxxx)">
+        <input type="hidden" id="reg-plan">
+        
+        <button class="btn-pro" onclick="submitRegistration()" id="reg-btn">تأكيد وحجز</button>
+        <button style="background:none; border:none; color:#666; margin-top:15px; cursor:pointer; width:100%;" onclick="document.getElementById('register-modal').classList.remove('show'); setTimeout(()=>document.getElementById('register-modal').style.display='none', 300);">إلغاء</button>
+    </div>
+</div>
     <div id="modal-guide" class="modal-glass">
         <div class="guide-content">
             <h2 style="color:white; text-align:center; margin-top:0;">🌙 الخريطة الكاملة</h2>
@@ -349,6 +434,45 @@
         </div>
     </div>
 
+    <div id="landing" class="screen landing-screen active">
+    <div class="logo-pro" style="font-size: 3rem;">HOT NIGHT</div>
+    <p style="color:#aaa; text-align:center; margin-bottom:30px;">للمتزوجين فقط +18 <br> جدد حياتك الزوجية بلمسة تكنولوجيا</p>
+    
+    <div class="pricing-card">
+        <h3>تجربة (شهر)</h3>
+        <div class="price-tag">149 EGP</div>
+        <button class="btn-gold" onclick="openRegister(1)">اشتراك</button>
+    </div>
+    
+    <div class="pricing-card best">
+        <div style="background:var(--primary); color:black; font-weight:bold; font-size:0.8rem; border-radius:4px; display:inline-block; padding:2px 8px;">الأكثر مبيعاً</div>
+        <h3>توفير (3 شهور)</h3>
+        <ul class="features-list">
+            <li>فتح جميع الألعاب (9 ألعاب)</li>
+            <li>تفعيل لجهازين (أنت وشريكك)</li>
+            <li>دعم فني كامل</li>
+        </ul>
+        <div class="price-tag">269 EGP</div>
+        <button class="btn-gold" onclick="openRegister(3)">اشتراك</button>
+    </div>
+
+    <div style="margin-top:30px;">
+        <p style="color:#666;">معاك كود تفعيل؟</p>
+        <button class="btn-pro" style="background:none; border:1px solid #444; color:#ccc;" onclick="show('login')">دخول المشتركين</button>
+    </div>
+</div>
+
+<div id="register-modal" class="modal-glass">
+    <div class="login-card-pro">
+        <h2 style="color:var(--primary);">بيانات الاشتراك</h2>
+        <input type="text" id="reg-name" class="input-field" placeholder="الاسم (للمراسلة)">
+        <input type="tel" id="reg-phone" class="input-field" placeholder="رقم الواتساب">
+        <input type="hidden" id="reg-plan">
+        <button class="btn-pro" onclick="submitRegistration()" id="reg-btn">تأكيد الطلب</button>
+        <button style="background:none; border:none; color:#888; margin-top:10px; cursor:pointer;" onclick="document.getElementById('register-modal').classList.remove('show')">إلغاء</button>
+    </div>
+</div>
+    
     <div id="login" class="screen login-wrapper">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
@@ -527,6 +651,198 @@
     </div>
 
     <script>
+
+        // ==========================================
+    // 1. SYSTEM CONFIGURATION (SAAS LOGIC)
+    // ==========================================
+    
+    // ⚠️ استبدل الرابط ده برابط الـ Web App اللي طلعلك من Google Apps Script
+    const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE"; 
+    
+    let fpPromise = FingerprintJS.load();
+
+    // --- منع السرقة (Right Click & Shortcuts) ---
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.onkeydown = function(e) {
+        if(e.keyCode == 123) return false; // F12
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    }
+
+    // --- نظام التسجيل (Registration) ---
+    function openRegister(plan) {
+        document.getElementById('reg-plan').value = plan;
+        document.getElementById('register-modal').style.display = 'flex';
+        setTimeout(()=>document.getElementById('register-modal').classList.add('show'), 10);
+    }
+
+    function submitRegistration() {
+        const name = document.getElementById('reg-name').value;
+        const phone = document.getElementById('reg-phone').value;
+        const plan = document.getElementById('reg-plan').value;
+        const btn = document.getElementById('reg-btn');
+        
+        if(!name || !phone) return alert("يرجى ملء جميع البيانات");
+        
+        btn.innerText = "جاري الحجز...";
+        btn.disabled = true;
+
+        // إرسال البيانات لجوجل شيت
+        fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "register", name: name, phone: phone, plan: plan })
+        }).then(() => {
+            document.getElementById('register-modal').classList.remove('show');
+            showSuccessModal(name, phone, plan);
+            btn.innerText = "تأكيد الطلب";
+            btn.disabled = false;
+        }).catch(err => {
+            alert("حدث خطأ في الاتصال");
+            btn.disabled = false;
+        });
+    }
+
+function showSuccessModal(name, phone, plan) {
+        // ==========================================
+        // ⚠️ تعديل هام: اكتب رقمك هنا ⚠️
+        // ==========================================
+        // اكتب الرقم بصيغة دولية (يعني 20 قبل الرقم) ومن غير +
+        const myNumber = "201017854522"; 
+        
+        // الرقم اللي هيظهر للناس عشان يحولوا عليه (مكتوب عادي)
+        const displayNumber = "01017854522"; 
+        // ==========================================
+
+        const modal = document.getElementById('modal-guide'); 
+        
+        // تجهيز رسالة الواتساب الجاهزة
+        const msgText = `مرحباً، أنا ${name}.%0aرقمي: ${phone}%0aتم الاشتراك في باقة (${plan} شهر).%0aجاري إرسال صورة التحويل الآن..`;
+        const waLink = `https://wa.me/${myNumber}?text=${msgText}`;
+
+        modal.innerHTML = `
+            <div class="guide-content" style="text-align:center;">
+                <h2 style="color:var(--green); margin-top:0;">تم تسجيل الطلب بنجاح! ✅</h2>
+                <p style="color:#ddd; font-size:0.9rem;">أهلاً بك يا <b>${name}</b></p>
+                
+                <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin:15px 0;">
+                    <p style="margin:0; color:#aaa; font-size:0.8rem;">1. يرجى تحويل مبلغ الاشتراك فودافون كاش على:</p>
+                    <h2 style="color:var(--primary); margin:5px 0; letter-spacing:2px;">${displayNumber}</h2>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:20px;">
+                    <p style="margin:0; color:#aaa; font-size:0.8rem;">2. بعد التحويل، اضغط هنا لإرسال الإيصال وتفعيل الحساب:</p>
+                    <a href="${waLink}" target="_blank" style="text-decoration:none;">
+                        <button class="btn-gold" style="background: #25D366; color: white; border:none; margin-top:10px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);">
+                            تأكيد الدفع واتساب 💬
+                        </button>
+                    </a>
+                </div>
+
+                <button style="background:none; border:none; color:#666; cursor:pointer; font-size:0.8rem;" onclick="location.reload()">إغلاق والعودة</button>
+            </div>
+        `;
+        modal.classList.add('show');
+    }
+
+    // --- نظام الدخول الجديد (Secure Login) ---
+    async function login() {
+        const code = document.getElementById('pass').value;
+        const btn = document.querySelector('.btn-pro');
+        const errorMsg = document.getElementById('error');
+        
+        if(!code) return;
+        
+        btn.innerText = "جاري التحقق...";
+        btn.disabled = true;
+        errorMsg.style.display = 'none';
+
+        try {
+            // 1. هات بصمة الجهاز
+            const fp = await fpPromise;
+            const result = await fp.get();
+            const fingerprint = result.visitorId;
+
+            // 2. كلم السيرفر (Google Script)
+            // ملاحظة: بنستخدم no-cors هنا عشان نتفادى مشاكل المتصفح، الرد بيتعالج بطريقة خاصة
+            // لو عايز رد دقيق 100% لازم setup معقد شوية، بس ده كافي للبداية
+            
+            // في حالة GAS WebApp الـ JSON response بيحتاج redirect: "follow"
+            const response = await fetch(API_URL, {
+                redirect: "follow",
+                method: 'POST',
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "login", code: code, fingerprint: fingerprint })
+            });
+            
+            const data = await response.json();
+            
+            if(data.success) {
+                // حفظ التوكن للدخول التلقائي
+                localStorage.setItem('hn_token', data.token);
+                localStorage.setItem('hn_expiry', data.expiry);
+                
+                // تشغيل الصوت لأول مرة عشان المتصفح يسمح بيه
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                
+                show('dashboard');
+            } else {
+                errorMsg.innerText = "⚠️ " + data.msg;
+                errorMsg.style.display = 'block';
+            }
+        } catch(e) {
+            console.log("Error:", e);
+            // Backdoor للتجربة لو السيرفر واقع (مؤقتاً)
+            if(code === "1234") { show('dashboard'); }
+            else {
+                 errorMsg.innerText = "خطأ في الاتصال بالسيرفر";
+                 errorMsg.style.display = 'block';
+            }
+        } finally {
+            btn.innerText = "ابدأ السهرة 🚀";
+            btn.disabled = false;
+        }
+    }
+
+    // --- بداية التشغيل (Startup Logic) ---
+    window.onload = function() {
+        // 1. فحص هل المستخدم مسجل دخول من قبل؟
+        const token = localStorage.getItem('hn_token');
+        
+        if(token) {
+            // لو معاه توكن، دخله على الداشبورد علطول
+            // (ممكن هنا نزود كود يتأكد من صلاحية التوكن من السيرفر)
+            show('dashboard', false);
+        } else {
+            // لو جديد، اظهر صفحة الهبوط (Landing Page)
+            // تأكد إنك ضفت كود الـ Landing Page HTML اللي اديتهولك
+            const landing = document.getElementById('landing');
+            if(landing) landing.style.display = 'flex';
+            else show('login', false); // احتياطي لو مفيش لاندنج
+        }
+        
+        // 2. استرجاع بيانات لعبة Catch Me (نقلنا الكود القديم هنا)
+        const savedP1 = localStorage.getItem('hn_catch_p1');
+        const savedP2 = localStorage.getItem('hn_catch_p2');
+        const savedTurn = localStorage.getItem('hn_catch_turn');
+        
+        // التأكد من وجود المتغيرات قبل التعيين (عشان الكود ميكسرش لو لسه متعرفوش تحت)
+        // بنستخدم setTimeout عشان نضمن إن المتغيرات اتعرفت
+        setTimeout(() => {
+            if(typeof catchPlayers !== 'undefined') {
+                if(savedP1) catchPlayers[0].pos = parseInt(savedP1);
+                if(savedP2) catchPlayers[1].pos = parseInt(savedP2);
+                if(savedTurn) cTurn = parseInt(savedTurn);
+            }
+        }, 500);
+    };
+
+    // ==========================================
+    // 2. GAME ENGINE (الكود القديم بتاعك يبدأ من هنا)
+    // ==========================================
+        
         // ==========================================
         // 1. ENGINE & DATA (Updated with Shuffle)
         // ==========================================
@@ -2257,42 +2573,6 @@ prizes: [
         // ==========================================
         let currentQ = [];
         let activeStage = "";
-
-        // دالة البدء (بتتنده لما يدوس على زرار الترحيب)
-        function initApp() {
-            // 1. تفعيل محرك الصوت (دي الخطوة اللي بتسلك السماعات)
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            // تشغيل صوت خفيف للتأكيد
-            try { playSound('click'); } catch(e) {}
-
-            // 2. إخفاء شاشة الترحيب السوداء
-            const overlay = document.getElementById('welcome-overlay');
-            overlay.style.opacity = '0'; // تختفي ببطء
-            setTimeout(() => {
-                overlay.style.display = 'none'; // تتشال خالص
-            }, 500);
-
-            // 3. التوجيه (لو مسجل يدخل، لو لأ يروح لشاشة الكود)
-            if(localStorage.getItem('isLoggedIn') === 'true') {
-                show('dashboard', false);
-            } else {
-                show('login', false);
-            }
-        }
-
-        // تحميل البيانات الصامت (بيشتغل في الخلفية أول ما الموقع يفتح)
-        window.onload = function() {
-            // استرجاع تقدم لعبة Catch Me المحفوظ
-            const savedP1 = localStorage.getItem('hn_catch_p1');
-            const savedP2 = localStorage.getItem('hn_catch_p2');
-            const savedTurn = localStorage.getItem('hn_catch_turn');
-            
-            if(savedP1) catchPlayers[0].pos = parseInt(savedP1);
-            if(savedP2) catchPlayers[1].pos = parseInt(savedP2);
-            if(savedTurn) cTurn = parseInt(savedTurn);
-        };
         
         function show(id, withSound = true) {
             if(withSound) try{ playSound('click'); }catch(e){}
@@ -2303,17 +2583,6 @@ prizes: [
                 }
             });
             const el = document.getElementById(id); el.style.display = 'flex'; setTimeout(()=>el.classList.add('active'), 10);
-        }
-
-        function login() {
-            const val = document.getElementById('pass').value;
-            if(btoa(val) === "MTIzNA==" || btoa(val) === "SE9U") { 
-                localStorage.setItem('isLoggedIn', 'true');
-                show('dashboard');
-            } else {
-                document.getElementById('error').style.display='block';
-            }
-        }
 
         function goHome() { show('dashboard'); }
         function openGuide() { try{playSound('click');}catch(e){} document.getElementById('modal-guide').classList.add('show'); }
