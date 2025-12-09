@@ -293,12 +293,6 @@
     </style>
 </head>
 <body>
-<div id="welcome-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#050505; z-index:9999; display:flex; justify-content:center; align-items:center; flex-direction:column; transition: opacity 0.5s;">
-        <div class="logo" style="margin-bottom:20px; font-size:3rem;">🔥</div>
-        <h1 style="color:var(--primary); margin-bottom:10px; font-size: 2rem;">HOT NIGHT</h1>
-        <p style="color:#888; margin-bottom:30px; font-family:'Cairo';">اضغط للبدء وتفعيل الصوت 🔊</p>
-        <button class="btn-gold" style="width:200px;" onclick="initApp()">ابدأ السهرة 🚀</button>
-    </div>
     <div id="modal-guide" class="modal-glass">
         <div class="guide-content">
             <h2 style="color:white; text-align:center; margin-top:0;">🌙 الخريطة الكاملة</h2>
@@ -2257,42 +2251,86 @@ prizes: [
         // ==========================================
         let currentQ = [];
         let activeStage = "";
+        
+      // --- نظام التشغيل والفحص الأمني (Real-Time Security Check) ---
+    window.onload = async function() {
+        // استرجاع الكود المحفوظ
+        const savedCode = localStorage.getItem('hn_code');
+        
+        if(savedCode) {
+            // العميل مسجل دخول قبل كده.. لكن لازم نتأكد من السيرفر حالاً!
+            try {
+                // إظهار شاشة تحميل مؤقتة
+                const loadingOverlay = document.createElement('div');
+                loadingOverlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; display:flex; justify-content:center; align-items:center; color:var(--primary); font-family:'Cairo'; font-size:1.2rem;";
+                loadingOverlay.innerHTML = "جاري تأمين الاتصال... 🔒";
+                document.body.appendChild(loadingOverlay);
 
-        // دالة البدء (بتتنده لما يدوس على زرار الترحيب)
-        function initApp() {
-            // 1. تفعيل محرك الصوت (دي الخطوة اللي بتسلك السماعات)
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
+                // تجهيز البصمة
+                const fp = await fpPromise;
+                const result = await fp.get();
+                const fingerprint = result.visitorId;
+
+                // إرسال طلب تحقق للسيرفر (نفس طلب الدخول)
+                const response = await fetch(https://script.google.com/macros/s/AKfycbw1dfXB3nmiubr8Z5QQV5uRPfXgGgUl32bLDPZ3EsEAg52WrYnlriawZb426XeNqDsq/exec, {
+                    redirect: "follow",
+                    method: 'POST',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "login", code: savedCode, fingerprint: fingerprint })
+                });
+
+                const data = await response.json();
+                
+                // إخفاء شاشة التحميل
+                loadingOverlay.remove();
+
+                if(data.success) {
+                    // تمام، الحالة Active والوقت سليم -> ادخل
+                    show('dashboard', false);
+                } else {
+                    // ⛔ مصيبة! الحساب وقف أو انتهى أو اتبند
+                    alert("تنبيه أمني: " + data.msg); // هيقوله: اشتراكك انتهى أو تم حظرك
+                    logoutAndKick();
+                }
+
+            } catch (error) {
+                // لو النت قاطع، ممكن ندخله مؤقتاً أو نطرده (الأمان يفضل نطرده)
+                // هنا هندخله عشان تجربة المستخدم لو السيرفر واقع لحظياً، بس ممكن تمنعه
+                // console.log("Offline login fallback");
+                // show('dashboard', false); 
+                
+                // الأفضل أمنياً: نرجعه يسجل دخول تاني
+                alert("فشل الاتصال بالخادم للتحقق من الاشتراك.");
+                logoutAndKick();
             }
-            // تشغيل صوت خفيف للتأكيد
-            try { playSound('click'); } catch(e) {}
-
-            // 2. إخفاء شاشة الترحيب السوداء
-            const overlay = document.getElementById('welcome-overlay');
-            overlay.style.opacity = '0'; // تختفي ببطء
-            setTimeout(() => {
-                overlay.style.display = 'none'; // تتشال خالص
-            }, 500);
-
-            // 3. التوجيه (لو مسجل يدخل، لو لأ يروح لشاشة الكود)
-            if(localStorage.getItem('isLoggedIn') === 'true') {
-                show('dashboard', false);
-            } else {
-                show('login', false);
-            }
+        } else {
+            // مستخدم جديد
+            const landing = document.getElementById('landing');
+            if(landing) landing.style.display = 'flex';
+            else show('login', false); 
         }
-
-        // تحميل البيانات الصامت (بيشتغل في الخلفية أول ما الموقع يفتح)
-        window.onload = function() {
-            // استرجاع تقدم لعبة Catch Me المحفوظ
+        
+        // استرجاع بيانات اللعبة (Catch Me)
+        setTimeout(() => {
             const savedP1 = localStorage.getItem('hn_catch_p1');
             const savedP2 = localStorage.getItem('hn_catch_p2');
             const savedTurn = localStorage.getItem('hn_catch_turn');
-            
-            if(savedP1) catchPlayers[0].pos = parseInt(savedP1);
-            if(savedP2) catchPlayers[1].pos = parseInt(savedP2);
-            if(savedTurn) cTurn = parseInt(savedTurn);
-        };
+            if(typeof catchPlayers !== 'undefined') {
+                if(savedP1) catchPlayers[0].pos = parseInt(savedP1);
+                if(savedP2) catchPlayers[1].pos = parseInt(savedP2);
+                if(savedTurn) cTurn = parseInt(savedTurn);
+            }
+        }, 500);
+    };
+
+    // دالة الطرد (Kick User)
+    function logoutAndKick() {
+        localStorage.removeItem('hn_code');
+        localStorage.removeItem('hn_token');
+        localStorage.removeItem('hn_expiry');
+        localStorage.clear(); // مسح شامل
+        location.reload(); // إعادة تحميل الصفحة عشان يروح للاندنج
+    }
         
         function show(id, withSound = true) {
             if(withSound) try{ playSound('click'); }catch(e){}
@@ -2305,16 +2343,51 @@ prizes: [
             const el = document.getElementById(id); el.style.display = 'flex'; setTimeout(()=>el.classList.add('active'), 10);
         }
 
-        function login() {
-            const val = document.getElementById('pass').value;
-            if(btoa(val) === "MTIzNA==" || btoa(val) === "SE9U") { 
-                localStorage.setItem('isLoggedIn', 'true');
+   // --- دالة الدخول المعدلة (بتحفظ الكود) ---
+    async function login() {
+        const code = document.getElementById('pass').value;
+        const btn = document.querySelector('#login .btn-pro');
+        const errorMsg = document.getElementById('error');
+        
+        if(!code) return;
+        
+        btn.innerText = "جاري التحقق...";
+        btn.disabled = true;
+        errorMsg.style.display = 'none';
+
+        try {
+            const fp = await fpPromise;
+            const result = await fp.get();
+            const fingerprint = result.visitorId;
+
+            const response = await fetch(https://script.google.com/macros/s/AKfycbw1dfXB3nmiubr8Z5QQV5uRPfXgGgUl32bLDPZ3EsEAg52WrYnlriawZb426XeNqDsq/exec, {
+                redirect: "follow",
+                method: 'POST',
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "login", code: code, fingerprint: fingerprint })
+            });
+            
+            const data = await response.json();
+            
+            if(data.success) {
+                // ⚠️ التغيير هنا: بنحفظ الكود عشان نستخدمه في الفحص التلقائي
+                localStorage.setItem('hn_code', code); 
+                localStorage.setItem('hn_token', data.token);
+                
+                if (audioCtx.state === 'suspended') audioCtx.resume();
                 show('dashboard');
             } else {
-                document.getElementById('error').style.display='block';
+                errorMsg.innerText = "⚠️ " + data.msg;
+                errorMsg.style.display = 'block';
             }
+        } catch(e) {
+            errorMsg.innerText = "خطأ في الاتصال";
+            errorMsg.style.display = 'block';
+        } finally {
+            btn.innerText = "ابدأ السهرة 🚀";
+            btn.disabled = false;
         }
-
+    }
         function goHome() { show('dashboard'); }
         function openGuide() { try{playSound('click');}catch(e){} document.getElementById('modal-guide').classList.add('show'); }
         function closeGuide() { try{playSound('click');}catch(e){} document.getElementById('modal-guide').classList.remove('show'); }
