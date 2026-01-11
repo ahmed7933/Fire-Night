@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hot Night 🔥 | النسخة الكاملة</title>
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
@@ -382,11 +383,17 @@
             </div>
 
             <button id="loginBtn" class="btn-pro" type="button" onclick="secureLogin()">
-    <span id="btnText">ابدأ السهرة 🚀</span>
+    <span id="btnText">ابدئي السهرة 🚀</span>
     <div id="spinner" class="spinner"></div>
 </button>
             
-            <div id="error" class="error-msg">⚠️ الكود غير صحيح، حاول مرة أخرى</div>
+            <div id="error" class="error-msg">⚠️ الكود غير صحيح، حاولي مرة أخرى</div>
+            <div id="payment-alert" style="display:none; margin-top:20px; animation: fadeIn 0.5s;">
+    <p id="payment-msg-text" style="color: #ffeb3b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;"></p>
+    <a id="payment-btn" href="#" target="_blank" class="btn-gold" style="display:block; text-decoration:none; background: linear-gradient(90deg, #25D366, #128C7E); color: white;">
+        تفعيل الاشتراك الآن 💬
+    </a>
+</div>
             
             <div style="margin-top: 30px; font-size: 0.7rem; color: #666;">
                 By Hot Night © 2025 | Secure Login
@@ -2337,11 +2344,14 @@ document.onkeydown = function(e) {
 };
 
 // ==========================================
-// 2. نظام الدخول الجديد (جوجل شيت)
+// 2. نظام الدخول الاحترافي (بصمة + كود)
 // ==========================================
 
-// 🔴 هام: حط هنا الرابط اللي نسخته من جوجل سكربت
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1dfXB3nmiubr8Z5QQV5uRPfXgGgUl32bLDPZ3EsEAg52WrYnlriawZb426XeNqDsq/exec'; 
+// 🔴 هام جداً: ضع رابط السكريبت الذي نسخته من جوجل هنا بين علامتي التنصيص
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWgYaVys1cSu0fEgakDS-haXkxkrBz15lHwZ-xOSPq8-Ue4lEhkOgH1nsn6Mpyu8vO/exec'; 
+
+// تجهيز مكتبة البصمة فور تحميل الصفحة
+let fpPromise = FingerprintJS.load();
 
 async function secureLogin() {
     const input = document.getElementById('pass');
@@ -2349,46 +2359,72 @@ async function secureLogin() {
     const btnText = document.getElementById('btnText');
     const spinner = document.getElementById('spinner');
     const errorMsg = document.getElementById('error');
-    const password = input.value.trim();
+    const paymentAlert = document.getElementById('payment-alert'); // الجزء الجديد
+    const paymentText = document.getElementById('payment-msg-text'); // نص الرسالة
+    const paymentBtn = document.getElementById('payment-btn'); // زر الواتس
+    
+    const code = input.value.trim();
 
-    if (!password) return;
+    if (!code) return;
 
-    // 1. تفعيل وضع التحميل
+    // 1. تفعيل وضع التحميل وإخفاء الرسائل القديمة
     btn.disabled = true;
-    if(btnText) btnText.style.display = "none"; // إخفاء النص
-    if(spinner) spinner.style.display = "inline-block"; // إظهار التحميل
+    if(btnText) btnText.style.display = "none";
+    if(spinner) spinner.style.display = "inline-block";
     errorMsg.style.display = "none";
-
-    console.log("🚀 جاري التحقق...");
+    paymentAlert.style.display = "none"; // إخفاء تنبيه الدفع لو كان ظاهراً
 
     try {
+        // 2. الحصول على بصمة الجهاز
+        const fp = await fpPromise;
+        const result = await fp.get();
+        const visitorId = result.visitorId; // هذا هو كود البصمة الفريد
+
+        // 3. إرسال الكود والبصمة للسيرفر
         const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            body: JSON.stringify({ pass: password }),
+            body: JSON.stringify({ code: code, fingerprint: visitorId }),
             headers: { "Content-Type": "text/plain;charset=utf-8" },
         });
 
         const data = await response.json();
 
-        if (data.allowed) {
+        // 4. معالجة الردود المختلفة من السيرفر
+        if (data.status === 'success') {
+            // حالة النجاح: دخول فوري
             localStorage.setItem('isLoggedIn', 'true');
             show('dashboard');
-        } else {
-            throw new Error("Wrong Code"); // عشان يروح للـ catch أو يظهر ايرور
+        } 
+        else if (data.status === 'payment_required') {
+            // حالة انتهاء التجربة أو الحاجة للدفع
+            paymentText.innerHTML = data.message; // الرسالة الودودة من السكريبت
+            paymentBtn.href = data.whatsapp_link; // رابط الواتس الجاهز
+            paymentAlert.style.display = "block"; // إظهار التنبيه
+            
+            // إخفاء حقل الإدخال لعدم المحاولة مرة أخرى (اختياري، جمالي)
+            input.blur();
+        } 
+        else {
+            // حالة خطأ (كود غلط، بصمة غلط، إلخ)
+            throw new Error(data.message);
         }
 
     } catch (err) {
-        console.error("خطأ:", err);
+        // إظهار رسالة الخطأ القادمة من السيرفر
+        console.error("Login Error:", err);
         errorMsg.style.display = "block";
-        errorMsg.innerText = "⚠️ الكود غير صحيح أو انتهت صلاحيته";
+        errorMsg.innerText = err.message || "⚠️ حدث خطأ في الاتصال، تأكد من النت.";
         input.style.animation = "shake 0.3s";
         setTimeout(() => input.style.animation = "", 300);
     } finally {
-        // 2. إرجاع الزر لوضعه الطبيعي
+        // إعادة الزر لوضعه الطبيعي
         btn.disabled = false;
         if(btnText) btnText.style.display = "inline";
         if(spinner) spinner.style.display = "none";
-        input.value = ""; // مسح الكود
+        // لا نمسح الكود إذا كانت الحالة دفع، عشان العميل ميكتبوش تاني
+        if (paymentAlert.style.display === "none") {
+             input.value = ""; 
+        }
     }
 }
         
