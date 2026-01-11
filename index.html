@@ -2280,29 +2280,24 @@ prizes: [
         let currentQ = [];
         let activeStage = "";
 
-        // دالة البدء (بتتنده لما يدوس على زرار الترحيب)
-        function initApp() {
-            // 1. تفعيل محرك الصوت (دي الخطوة اللي بتسلك السماعات)
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            // تشغيل صوت خفيف للتأكيد
-            try { playSound('click'); } catch(e) {}
+// دالة البداية: توجيه مباشر لصفحة الدخول دائماً
+function initApp() {
+    // 1. تفعيل الصوت (ضروري للمتصفحات)
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    try { playSound('click'); } catch(e) {}
 
-            // 2. إخفاء شاشة الترحيب السوداء
-            const overlay = document.getElementById('welcome-overlay');
-            overlay.style.opacity = '0'; // تختفي ببطء
-            setTimeout(() => {
-                overlay.style.display = 'none'; // تتشال خالص
-            }, 500);
-
-            // 3. التوجيه (لو مسجل يدخل، لو لأ يروح لشاشة الكود)
-            if(localStorage.getItem('isLoggedIn') === 'true') {
-                show('dashboard', false);
-            } else {
-                show('login', false);
-            }
-        }
+    // 2. إخفاء شاشة الترحيب السوداء
+    const overlay = document.getElementById('welcome-overlay');
+    overlay.style.opacity = '0';
+    
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        // 3. التوجيه الإجباري لصفحة إدخال الكود
+        show('login', false); 
+    }, 500);
+}
 
         // تحميل البيانات الصامت (بيشتغل في الخلفية أول ما الموقع يفتح)
         window.onload = function() {
@@ -2353,34 +2348,35 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzWgYaVys1cSu0f
 // تجهيز مكتبة البصمة فور تحميل الصفحة
 let fpPromise = FingerprintJS.load();
 
+// دالة الدخول الآمن: تتحقق من السيرفر في كل مرة
 async function secureLogin() {
     const input = document.getElementById('pass');
     const btn = document.getElementById('loginBtn');
     const btnText = document.getElementById('btnText');
     const spinner = document.getElementById('spinner');
     const errorMsg = document.getElementById('error');
-    const paymentAlert = document.getElementById('payment-alert'); // الجزء الجديد
-    const paymentText = document.getElementById('payment-msg-text'); // نص الرسالة
-    const paymentBtn = document.getElementById('payment-btn'); // زر الواتس
+    const paymentAlert = document.getElementById('payment-alert');
+    const paymentText = document.getElementById('payment-msg-text');
+    const paymentBtn = document.getElementById('payment-btn');
     
     const code = input.value.trim();
 
     if (!code) return;
 
-    // 1. تفعيل وضع التحميل وإخفاء الرسائل القديمة
+    // 1. تفعيل وضع التحميل
     btn.disabled = true;
     if(btnText) btnText.style.display = "none";
     if(spinner) spinner.style.display = "inline-block";
     errorMsg.style.display = "none";
-    paymentAlert.style.display = "none"; // إخفاء تنبيه الدفع لو كان ظاهراً
+    paymentAlert.style.display = "none";
 
     try {
-        // 2. الحصول على بصمة الجهاز
+        // 2. الحصول على بصمة الجهاز الحالية
         const fp = await fpPromise;
         const result = await fp.get();
-        const visitorId = result.visitorId; // هذا هو كود البصمة الفريد
+        const visitorId = result.visitorId;
 
-        // 3. إرسال الكود والبصمة للسيرفر
+        // 3. إرسال الكود والبصمة للسيرفر للتحقق اللحظي
         const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify({ code: code, fingerprint: visitorId }),
@@ -2389,39 +2385,35 @@ async function secureLogin() {
 
         const data = await response.json();
 
-        // 4. معالجة الردود المختلفة من السيرفر
+        // 4. معالجة الرد
         if (data.status === 'success') {
-            // حالة النجاح: دخول فوري
-            localStorage.setItem('isLoggedIn', 'true');
+            // نجاح: افتح اللعبة فوراً (بدون حفظ الكود في الذاكرة الدائمة)
             show('dashboard');
         } 
         else if (data.status === 'payment_required') {
-            // حالة انتهاء التجربة أو الحاجة للدفع
-            paymentText.innerHTML = data.message; // الرسالة الودودة من السكريبت
-            paymentBtn.href = data.whatsapp_link; // رابط الواتس الجاهز
-            paymentAlert.style.display = "block"; // إظهار التنبيه
-            
-            // إخفاء حقل الإدخال لعدم المحاولة مرة أخرى (اختياري، جمالي)
-            input.blur();
+            // انتهى الوقت: اظهر رسالة الدفع
+            paymentText.innerHTML = data.message;
+            paymentBtn.href = data.whatsapp_link;
+            paymentAlert.style.display = "block";
         } 
         else {
-            // حالة خطأ (كود غلط، بصمة غلط، إلخ)
+            // خطأ في الكود أو البصمة
             throw new Error(data.message);
         }
 
     } catch (err) {
-        // إظهار رسالة الخطأ القادمة من السيرفر
         console.error("Login Error:", err);
         errorMsg.style.display = "block";
-        errorMsg.innerText = err.message || "⚠️ حدث خطأ في الاتصال، تأكد من النت.";
+        errorMsg.innerText = err.message || "تأكد من اتصالك بالإنترنت";
         input.style.animation = "shake 0.3s";
         setTimeout(() => input.style.animation = "", 300);
     } finally {
-        // إعادة الزر لوضعه الطبيعي
+        // 5. إعادة الزر لوضعه الطبيعي
         btn.disabled = false;
         if(btnText) btnText.style.display = "inline";
         if(spinner) spinner.style.display = "none";
-        // لا نمسح الكود إذا كانت الحالة دفع، عشان العميل ميكتبوش تاني
+        
+        // مسح الكود من الخانة فقط إذا لم تكن رسالة دفع (عشان يكتبه تاني المرة الجاية)
         if (paymentAlert.style.display === "none") {
              input.value = ""; 
         }
