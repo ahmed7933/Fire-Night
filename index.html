@@ -8,6 +8,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
+/* شاشة البداية والاختيار */
+.start-options {
+    display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 300px;
+}
+.btn-outline {
+    background: transparent; border: 2px solid var(--primary); color: var(--primary);
+    padding: 15px; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer;
+}
+
+/* شاشة ظهور الكود */
+.code-display-box {
+    background: rgba(255,255,255,0.1); border: 2px dashed var(--primary);
+    padding: 20px; border-radius: 15px; margin: 20px 0;
+}
+.generated-code {
+    font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 5px;
+    font-family: monospace; display: block; margin: 10px 0;
+}
+        
 /* ضيف الكود ده جوه الـ style مع باقي الاكواد */
 .spinner {
     display: inline-block;
@@ -312,6 +331,49 @@
         <p style="color:#888; margin-bottom:30px; font-family:'Cairo';">اضغط للبدء وتفعيل الصوت 🔊</p>
         <button class="btn-gold" style="width:200px;" onclick="initApp()">ابدأ السهرة 🚀</button>
     </div>
+    <div id="landing-screen" class="screen login-wrapper" style="z-index: 2000;">
+    <div class="login-card-pro">
+        <div class="logo-pro">HOT NIGHT</div>
+        <p class="subtitle-pro">أهلاً بكِ في تجربة لا تنسى</p>
+        
+        <div class="start-options">
+            <button class="btn-pro" onclick="show('signup-screen')">أول مرة أدخل (احصل على كود)</button>
+            <button class="btn-outline" onclick="show('login')">معايا كود تفعيل</button>
+        </div>
+    </div>
+</div>
+
+<div id="signup-screen" class="screen login-wrapper" style="z-index: 2000;">
+    <div class="login-card-pro">
+        <h2 style="color:var(--primary); margin-bottom:10px;">تسجيل جديد</h2>
+        <p style="color:#aaa; font-size:0.9rem; margin-bottom:30px;">اكتبي رقم موبايلك عشان نطلعلك كود خاص بيكي</p>
+        
+        <div class="input-group-pro">
+            <input type="tel" id="user-phone" class="input-pro" placeholder="رقم الموبايل" style="direction:ltr;">
+        </div>
+
+        <button id="signupBtn" class="btn-pro" onclick="requestActivationCode()">
+            <span>احصل على الكود 🎁</span>
+        </button>
+        
+        <button onclick="show('landing-screen')" style="background:none; border:none; color:#888; margin-top:20px; cursor:pointer;">رجوع</button>
+    </div>
+</div>
+
+<div id="code-result-screen" class="screen login-wrapper" style="z-index: 2000;">
+    <div class="login-card-pro">
+        <h2 style="color:#2ecc71;">تم بنجاح! 🎉</h2>
+        <p style="color:#ccc;">ده كود التفعيل الخاص بيكي، احفظيه كويس!</p>
+        
+        <div class="code-display-box">
+            <span id="final-code" class="generated-code">----</span>
+        </div>
+
+        <button class="btn-pro" onclick="copyAndGoLogin()">
+            نسخ ودخول 🚀
+        </button>
+    </div>
+</div>
     <div id="modal-guide" class="modal-glass">
         <div class="guide-content">
             <h2 style="color:white; text-align:center; margin-top:0;">🌙 الخريطة الكاملة</h2>
@@ -396,7 +458,7 @@
 </div>
             
             <div style="margin-top: 30px; font-size: 0.7rem; color: #666;">
-                By Hot Night © 2025 | Secure Login
+                By Hot Night © 2026 | Secure Login
             </div>
 
         </div> </div>
@@ -2280,23 +2342,74 @@ prizes: [
         let currentQ = [];
         let activeStage = "";
 
-// دالة البداية: توجيه مباشر لصفحة الدخول دائماً
+// 1. تعديل دالة البداية لتظهر شاشة الاختيار بدلاً من شاشة الكود مباشرة
 function initApp() {
-    // 1. تفعيل الصوت (ضروري للمتصفحات)
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     try { playSound('click'); } catch(e) {}
 
-    // 2. إخفاء شاشة الترحيب السوداء
     const overlay = document.getElementById('welcome-overlay');
     overlay.style.opacity = '0';
     
     setTimeout(() => {
         overlay.style.display = 'none';
-        // 3. التوجيه الإجباري لصفحة إدخال الكود
-        show('login', false); 
+        // التعديل هنا: التوجيه لصفحة الاختيار (Landing)
+        show('landing-screen', false); 
     }, 500);
+}
+
+// 2. دالة طلب الكود من السيرفر
+async function requestActivationCode() {
+    const phoneInput = document.getElementById('user-phone');
+    const phone = phoneInput.value.trim();
+    const btn = document.getElementById('signupBtn');
+
+    if (!phone || phone.length < 8) {
+        alert("اكتبي رقم موبايل صحيح");
+        return;
+    }
+
+    btn.innerText = "جاري التحضير... ⏳";
+    btn.disabled = true;
+
+    try {
+        // إرسال طلب تسجيل (Action: signup)
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'signup', phone: phone }),
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+        });
+
+        const data = await response.json();
+
+        if (data.status === 'new' || data.status === 'existing') {
+            // عرض الكود للعميلة
+            document.getElementById('final-code').innerText = data.code;
+            show('code-result-screen');
+        } else {
+            alert("حدث خطأ: " + data.message);
+        }
+
+    } catch (err) {
+        alert("تأكد من الاتصال بالإنترنت");
+    } finally {
+        btn.innerText = "احصل على الكود 🎁";
+        btn.disabled = false;
+    }
+}
+
+// 3. دالة نسخ الكود والذهاب للدخول
+function copyAndGoLogin() {
+    const code = document.getElementById('final-code').innerText;
+    
+    // محاولة النسخ للحافظة
+    navigator.clipboard.writeText(code).then(() => {
+        alert("تم نسخ الكود! الصقيه في الخانة القادمة.");
+    }).catch(() => {});
+
+    // وضع الكود تلقائياً في خانة الدخول لتسهيل الأمر
+    document.getElementById('pass').value = code;
+    
+    show('login');
 }
 
         // تحميل البيانات الصامت (بيشتغل في الخلفية أول ما الموقع يفتح)
@@ -2728,7 +2841,6 @@ function eliminatePlace(id) {
     </script>
 </body>
 </html>
-
 
 
 
