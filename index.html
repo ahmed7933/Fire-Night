@@ -2373,7 +2373,7 @@ prizes: [
         // 3. CORE LOGIC (المنطق الأساسي)
         // ==========================================
         let currentQ = [];
-        let activeStage = "";
+        let actsecureLoginiveStage = "";
 
 // 1. تعديل دالة البداية لتظهر شاشة الاختيار بدلاً من شاشة الكود مباشرة
 function initApp() {
@@ -2531,29 +2531,20 @@ async function secureLogin() {
 
         const data = await response.json();
 
-       // داخل initApp
-if (data.status === 'success') {
-    overlay.style.opacity = '0';
-    setTimeout(() => {
-        overlay.style.display = 'none';// --- كود المؤقت الجديد ---
-    if (data.remaining_ms && data.remaining_ms > 0) {
-        if (autoKickTimer) clearTimeout(autoKickTimer);
-        autoKickTimer = setTimeout(forceLogout, data.remaining_ms);
-    }
-        show('dashboard', false);
-    }, 500);
+        // ----------------------------------------------------
+        // هنا كان الخطأ وتم إصلاحه
+        // ----------------------------------------------------
+        if (data.status === 'success') {
+            // الانتقال للداشبورد فوراً
+            show('dashboard', false);
 
-    // --- كود المؤقت الجديد (انسخ ده) ---
-    // لو فيه وقت متبقي وجاي من السيرفر (والحالة مش Paid)
-    if (data.remaining_ms && data.remaining_ms > 0) {
-        console.log("سيتم غلق اللعبة بعد: " + (data.remaining_ms/1000/60).toFixed(2) + " دقيقة");
-        if (autoKickTimer) clearTimeout(autoKickTimer); // تنظيف أي مؤقت قديم
-        autoKickTimer = setTimeout(forceLogout, data.remaining_ms);
-    }
-    // ----------------------------------
-}
-
-    
+            // إعداد مؤقت الطرد
+            if (data.remaining_ms && data.remaining_ms > 0) {
+                console.log("سيتم غلق اللعبة بعد: " + (data.remaining_ms/1000/60).toFixed(2) + " دقيقة");
+                if (autoKickTimer) clearTimeout(autoKickTimer);
+                autoKickTimer = setTimeout(forceLogout, data.remaining_ms);
+            }
+        } 
         else if (data.status === 'payment_required') {
             // انتهى الوقت: اظهر رسالة الدفع
             paymentText.innerHTML = data.message;
@@ -2577,7 +2568,7 @@ if (data.status === 'success') {
         if(btnText) btnText.style.display = "inline";
         if(spinner) spinner.style.display = "none";
         
-        // مسح الكود من الخانة فقط إذا لم تكن رسالة دفع (عشان يكتبه تاني المرة الجاية)
+        // مسح الكود من الخانة فقط إذا لم تكن رسالة دفع
         if (paymentAlert.style.display === "none") {
              input.value = ""; 
         }
