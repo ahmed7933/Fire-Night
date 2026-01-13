@@ -356,7 +356,7 @@
             <span>احصل على الكود 🎁</span>
         </button>
         
-        <button onclick="show('landing-screen')" style="background:none; border:none; color:#888; margin-top:20px; cursor:pointer;">رجوع</button>
+        <button onclick="show('landing-screen')" style="background:none; border:none; color:#888; margin-top:20px; cursor:pointer;">رجوع للقائمة السابقة ↩️</button>
     </div>
 </div>
 
@@ -424,7 +424,7 @@
         </div>
     </div>
 
-    <div id="login" class="screen login-wrapper">
+<div id="login" class="screen login-wrapper">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
 
@@ -445,23 +445,29 @@
             </div>
 
             <button id="loginBtn" class="btn-pro" type="button" onclick="secureLogin()">
-    <span id="btnText">ابدئي السهرة 🚀</span>
-    <div id="spinner" class="spinner"></div>
-</button>
+                <span id="btnText">ابدئي السهرة 🚀</span>
+                <div id="spinner" class="spinner"></div>
+            </button>
             
+            <button onclick="show('landing-screen')" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer; font-size:0.9rem; width:100%;">
+                رجوع للقائمة السابقة ↩️
+            </button>
+
             <div id="error" class="error-msg">⚠️ الكود غير صحيح، حاولي مرة أخرى</div>
+            
             <div id="payment-alert" style="display:none; margin-top:20px; animation: fadeIn 0.5s;">
-    <p id="payment-msg-text" style="color: #ffeb3b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;"></p>
-    <a id="payment-btn" href="#" target="_blank" class="btn-gold" style="display:block; text-decoration:none; background: linear-gradient(90deg, #25D366, #128C7E); color: white;">
-        تفعيل الاشتراك الآن 💬
-    </a>
-</div>
+                <p id="payment-msg-text" style="color: #ffeb3b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px;"></p>
+                <a id="payment-btn" href="#" target="_blank" class="btn-gold" style="display:block; text-decoration:none; background: linear-gradient(90deg, #25D366, #128C7E); color: white;">
+                    تفعيل الاشتراك الآن 💬
+                </a>
+            </div>
             
             <div style="margin-top: 30px; font-size: 0.7rem; color: #666;">
                 By Hot Night © 2026 | Secure Login
             </div>
 
-        </div> </div>
+        </div> 
+    </div>
     </div>
 
     <div id="dashboard" class="screen">
