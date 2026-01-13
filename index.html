@@ -675,7 +675,40 @@
             }
             return array;
         }
+// متغير لتخزين عداد الطرد
+let autoKickTimer = null;
 
+// دالة الطرد الفوري (بتخفي اللعبة وتظهر رسالة الدفع)
+function forceLogout() {
+    console.log("⏰ الوقت انتهى! يتم الطرد الآن...");
+    
+    // 1. مسح الكود عشان ميقدرش يعمل Refresh ويدخل تاني
+    // localStorage.removeItem('hn_saved_code'); // (اختياري: لو عايز تمسحه شيل الشرطتين)
+
+    // 2. إخفاء كل الشاشات
+    document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+    
+    // 3. إظهار شاشة الدخول
+    const loginScreen = document.getElementById('login');
+    loginScreen.style.display = 'flex';
+    loginScreen.classList.add('active');
+
+    // 4. إظهار رسالة الدفع مباشرة
+    const paymentAlert = document.getElementById('payment-alert');
+    const paymentText = document.getElementById('payment-msg-text');
+    const paymentBtn = document.getElementById('payment-btn');
+    
+    if(paymentAlert) {
+        paymentText.innerHTML = "⌛ انتهى وقت التجربة المجانية!<br>عشان تكملي لعب وتستمتعي، فعلي الاشتراك فوراً.";
+        paymentBtn.href = "https://wa.me/201117612132?text=" + encodeURIComponent("عايزة أجدد الاشتراك");
+        paymentAlert.style.display = "block";
+    }
+    
+    // 5. صوت تنبيه (اختياري)
+    try { playSound('click'); } catch(e) {}
+}
+        
+        
         const gameInstructions = {
             game1: { 
                 title: "1. هزار ونار 😂", 
@@ -2498,11 +2531,29 @@ async function secureLogin() {
 
         const data = await response.json();
 
-        // 4. معالجة الرد
-        if (data.status === 'success') {
-            // نجاح: افتح اللعبة فوراً (بدون حفظ الكود في الذاكرة الدائمة)
-            show('dashboard');
-        } 
+       // داخل initApp
+if (data.status === 'success') {
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.display = 'none';// --- كود المؤقت الجديد ---
+    if (data.remaining_ms && data.remaining_ms > 0) {
+        if (autoKickTimer) clearTimeout(autoKickTimer);
+        autoKickTimer = setTimeout(forceLogout, data.remaining_ms);
+    }
+        show('dashboard', false);
+    }, 500);
+
+    // --- كود المؤقت الجديد (انسخ ده) ---
+    // لو فيه وقت متبقي وجاي من السيرفر (والحالة مش Paid)
+    if (data.remaining_ms && data.remaining_ms > 0) {
+        console.log("سيتم غلق اللعبة بعد: " + (data.remaining_ms/1000/60).toFixed(2) + " دقيقة");
+        if (autoKickTimer) clearTimeout(autoKickTimer); // تنظيف أي مؤقت قديم
+        autoKickTimer = setTimeout(forceLogout, data.remaining_ms);
+    }
+    // ----------------------------------
+}
+
+    
         else if (data.status === 'payment_required') {
             // انتهى الوقت: اظهر رسالة الدفع
             paymentText.innerHTML = data.message;
